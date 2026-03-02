@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🔍 СБОР КООРДИНАТ - 3 уровня (PNG)</title>
+    <title>🔍 Найди предметы - 1 уровень</title>
     <style>
         * {
             margin: 0;
@@ -59,33 +59,6 @@
             cursor: pointer;
             font-weight: bold;
             border: 3px solid #e9b87a;
-        }
-        
-        /* ПЕРЕКЛЮЧАТЕЛЬ УРОВНЕЙ */
-        .level-switch {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .level-btn {
-            background: #d4b595;
-            border: 4px solid #a6896b;
-            color: #4a3729;
-            font-size: 24px;
-            font-weight: bold;
-            padding: 15px 30px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        
-        .level-btn.active {
-            background: #b5926a;
-            color: white;
-            border-color: #e9b87a;
-            transform: scale(1.05);
         }
         
         .image-zone {
@@ -219,7 +192,7 @@
 </head>
 <body>
     <div class="game-container">
-        <div class="instruction">🔍 КЛИКАЙ ПО ПРЕДМЕТАМ - КООРДИНАТЫ СОХРАНЯЮТСЯ (PNG)</div>
+        <div class="instruction">🔍 КЛИКАЙ ПО ПРЕДМЕТАМ - КООРДИНАТЫ СОХРАНЯЮТСЯ</div>
         
         <!-- ФОРМА ДЛЯ ИГРОКА -->
         <div class="player-form">
@@ -228,16 +201,9 @@
             <button onclick="savePlayerInfo()">💾 СОХРАНИТЬ</button>
         </div>
         
-        <!-- ПЕРЕКЛЮЧЕНИЕ УРОВНЕЙ -->
-        <div class="level-switch">
-            <button class="level-btn active" onclick="switchLevel(1)">УРОВЕНЬ 1</button>
-            <button class="level-btn" onclick="switchLevel(2)">УРОВЕНЬ 2</button>
-            <button class="level-btn" onclick="switchLevel(3)">УРОВЕНЬ 3</button>
-        </div>
-        
-        <!-- КАРТИНКА -->
+        <!-- КАРТИНКА (твой файл игра.jpg) -->
         <div class="image-zone" id="imageZone">
-            <img src="level1.png" id="gameImage" alt="Level 1">
+            <img src="игра.jpg" id="gameImage" alt="Найди предметы">
         </div>
         
         <!-- ПАНЕЛЬ КООРДИНАТ -->
@@ -247,7 +213,7 @@
             
             <div class="clicks-history">
                 <div class="history-title">
-                    <span>📋 ИСТОРИЯ КЛИКОВ (УРОВЕНЬ <span id="currentLevelDisplay">1</span>)</span>
+                    <span>📋 ИСТОРИЯ КЛИКОВ</span>
                     <button class="clear-btn" onclick="clearHistory()">ОЧИСТИТЬ</button>
                 </div>
                 <div class="click-log" id="clickLog"></div>
@@ -259,44 +225,14 @@
     </div>
 
     <script>
-        // ТЕКУЩИЙ УРОВЕНЬ
-        let currentLevel = 1;
-        
-        // ХРАНИЛИЩЕ КООРДИНАТ ДЛЯ КАЖДОГО УРОВНЯ
-        let levelClicks = {
-            1: [],
-            2: [],
-            3: []
-        };
+        // ХРАНИЛИЩЕ КООРДИНАТ
+        let clicks = [];
 
         // DOM элементы
         const imageZone = document.getElementById('imageZone');
         const image = document.getElementById('gameImage');
         const coordsDisplay = document.getElementById('coordsDisplay');
         const clickLog = document.getElementById('clickLog');
-        const currentLevelDisplay = document.getElementById('currentLevelDisplay');
-        const levelBtns = document.querySelectorAll('.level-btn');
-
-        // ПЕРЕКЛЮЧЕНИЕ УРОВНЕЙ
-        function switchLevel(level) {
-            currentLevel = level;
-            
-            // Обновляем активную кнопку
-            levelBtns.forEach((btn, index) => {
-                if (index + 1 === level) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // Меняем картинку (PNG)
-            image.src = `level${level}.png`;
-            currentLevelDisplay.textContent = level;
-            
-            // Обновляем историю кликов
-            updateClickLog();
-        }
 
         // СОХРАНЕНИЕ ИНФОРМАЦИИ ОБ ИГРОКЕ
         function savePlayerInfo() {
@@ -326,8 +262,8 @@
             // Показываем текущие координаты
             coordsDisplay.textContent = `X: ${imgX}, Y: ${imgY}`;
 
-            // Сохраняем в историю текущего уровня
-            levelClicks[currentLevel].push({
+            // Сохраняем в историю
+            clicks.push({
                 x: imgX,
                 y: imgY,
                 time: new Date().toLocaleTimeString()
@@ -336,13 +272,12 @@
             // Обновляем отображение истории
             updateClickLog();
 
-            // Выводим в консоль для удобства
-            console.log(`Уровень ${currentLevel}: X=${imgX}, Y=${imgY}`);
+            // Выводим в консоль
+            console.log(`X=${imgX}, Y=${imgY}`);
         });
 
         // ОБНОВЛЕНИЕ ИСТОРИИ КЛИКОВ
         function updateClickLog() {
-            const clicks = levelClicks[currentLevel];
             let html = '';
             
             if (clicks.length === 0) {
@@ -369,10 +304,10 @@
             });
         }
 
-        // ОЧИСТКА ИСТОРИИ ТЕКУЩЕГО УРОВНЯ
+        // ОЧИСТКА ИСТОРИИ
         function clearHistory() {
-            if (confirm(`Очистить историю кликов для уровня ${currentLevel}?`)) {
-                levelClicks[currentLevel] = [];
+            if (confirm('Очистить историю кликов?')) {
+                clicks = [];
                 updateClickLog();
                 coordsDisplay.textContent = 'X: --, Y: --';
             }
@@ -380,8 +315,8 @@
 
         // СБРОС ВСЕЙ ИГРЫ
         function resetGame() {
-            if (confirm('Сбросить все уровни?')) {
-                levelClicks = {1: [], 2: [], 3: []};
+            if (confirm('Сбросить всё?')) {
+                clicks = [];
                 updateClickLog();
                 coordsDisplay.textContent = 'X: --, Y: --';
                 document.getElementById('firstName').value = '';
@@ -391,11 +326,8 @@
 
         // ИНИЦИАЛИЗАЦИЯ
         image.onload = () => {
-            console.log(`Уровень ${currentLevel} загружен: ${image.naturalWidth}x${image.naturalHeight}`);
+            console.log(`Картинка загружена: ${image.naturalWidth}x${image.naturalHeight}`);
         };
-
-        // Загружаем первый уровень
-        switchLevel(1);
     </script>
 </body>
 </html>
