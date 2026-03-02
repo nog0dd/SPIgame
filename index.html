@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>🔍 Найди предметы - 3 уровня</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <style>
         * {
             margin: 0;
@@ -16,37 +16,37 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 20px;
+            padding: 10px;
         }
         .game-container {
             background: #e6d5b8;
-            border-radius: 50px;
-            padding: 30px;
-            border: 6px solid #c4a27a;
-            box-shadow: 0 30px 40px rgba(0,0,0,0.3);
+            border-radius: 30px;
+            padding: 20px;
+            border: 4px solid #c4a27a;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
             max-width: 1800px;
             width: 100%;
         }
         
         .player-form {
             background: #d4b595;
-            border-radius: 60px;
-            padding: 20px 30px;
-            margin-bottom: 25px;
+            border-radius: 40px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
             border: 3px solid #a6896b;
         }
         
         .player-form input {
-            padding: 15px 25px;
-            font-size: 20px;
-            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 40px;
             border: 3px solid #8b6f50;
             background: #f5e6d3;
-            width: 280px;
+            width: 250px;
             max-width: 100%;
         }
         
@@ -54,9 +54,9 @@
             background: #8b6f50;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            border-radius: 50px;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 40px;
             cursor: pointer;
             font-weight: bold;
             border: 3px solid #e9b87a;
@@ -68,13 +68,13 @@
             max-width: 1100px;
             height: auto;
             aspect-ratio: 1100/800;
-            margin: 0 auto 25px auto;
-            border-radius: 40px;
+            margin: 0 auto 20px auto;
+            border-radius: 30px;
             overflow: hidden;
-            border: 8px solid #b5926a;
+            border: 6px solid #b5926a;
             cursor: crosshair;
             background: #3a4a5a;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
         
         #gameImage {
@@ -89,27 +89,27 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin: 25px 0;
-            padding: 20px;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 15px;
             background: #d4b595;
-            border-radius: 50px;
-            border: 4px solid #a6896b;
+            border-radius: 30px;
+            border: 3px solid #a6896b;
         }
         
         .item-image {
-            width: 250px;
-            height: 250px;
-            max-width: calc(25% - 10px);
-            min-width: 120px;
+            width: 200px;
+            height: 200px;
+            max-width: calc(20% - 8px);
+            min-width: 100px;
             object-fit: cover;
             transition: 0.3s;
             filter: brightness(1);
-            border-radius: 20px;
+            border-radius: 15px;
             margin: 0;
-            border: 5px solid #e9d4b0;
+            border: 4px solid #e9d4b0;
             background: #f5e6d3;
-            padding: 8px;
+            padding: 5px;
         }
         
         .item-image.found {
@@ -120,32 +120,33 @@
         
         #message {
             text-align: center;
-            font-size: 40px;
+            font-size: 32px;
             font-weight: bold;
             color: #4a3729;
-            margin: 20px 0;
-            min-height: 70px;
+            margin: 15px 0;
+            min-height: 60px;
         }
         
         .level-buttons {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 15px 0;
             flex-wrap: wrap;
         }
         
         .level-btn {
             background: #b5926a;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            padding: 15px 40px;
-            border-radius: 60px;
+            padding: 12px 30px;
+            border-radius: 40px;
             cursor: pointer;
             color: white;
-            border: 4px solid #e9b87a;
+            border: 3px solid #e9b87a;
             transition: 0.2s;
+            flex: 0 1 auto;
         }
         
         .level-btn:hover {
@@ -161,62 +162,121 @@
         .reset-btn {
             background: #b5926a;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            padding: 15px 40px;
-            border-radius: 60px;
+            padding: 12px 40px;
+            border-radius: 40px;
             cursor: pointer;
             color: white;
-            border: 4px solid #e9b87a;
+            border: 3px solid #e9b87a;
             margin: 10px auto 0;
             display: block;
         }
         
         .instruction {
             color: #4a3729;
-            font-size: 26px;
-            margin-bottom: 20px;
+            font-size: 22px;
+            margin-bottom: 15px;
             text-align: center;
             font-weight: bold;
         }
 
         .level-indicator {
             text-align: center;
-            font-size: 24px;
+            font-size: 20px;
             color: #4a3729;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
         .coords-hint {
             text-align: center;
             color: #8b6f50;
-            font-size: 18px;
+            font-size: 16px;
             margin-top: 10px;
             font-style: italic;
         }
 
+        /* СПЕЦИАЛЬНО ДЛЯ ТЕЛЕФОНОВ */
         @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
             .game-container {
-                padding: 15px;
+                padding: 12px;
+                border-radius: 20px;
             }
             
             .instruction {
-                font-size: 20px;
+                font-size: 18px;
+            }
+            
+            .level-indicator {
+                font-size: 18px;
+            }
+            
+            .level-btn {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+            
+            .image-zone {
+                border-width: 4px;
+                border-radius: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .items-container {
+                gap: 5px;
+                padding: 10px;
             }
             
             .item-image {
                 width: 150px;
                 height: 150px;
+                min-width: 70px;
+                border-width: 3px;
+                padding: 3px;
             }
             
             #message {
-                font-size: 30px;
+                font-size: 24px;
+                margin: 10px 0;
+                min-height: 50px;
             }
             
-            .level-btn, .reset-btn {
+            .reset-btn {
                 font-size: 18px;
-                padding: 12px 25px;
+                padding: 10px 30px;
+            }
+            
+            .player-form input {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            .player-form button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+
+        /* ДЛЯ ОЧЕНЬ МАЛЕНЬКИХ ЭКРАНОВ */
+        @media (max-width: 480px) {
+            .item-image {
+                width: 120px;
+                height: 120px;
+                min-width: 60px;
+            }
+            
+            .level-btn {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+            
+            .instruction {
+                font-size: 16px;
             }
         }
     </style>
@@ -234,9 +294,9 @@
         </div>
         
         <div class="level-buttons">
-            <button class="level-btn active" onclick="switchToLevel(1)">🎮 УРОВЕНЬ 1</button>
-            <button class="level-btn" onclick="switchToLevel(2)">🎮 УРОВЕНЬ 2</button>
-            <button class="level-btn" onclick="switchToLevel(3)">🎮 УРОВЕНЬ 3</button>
+            <button class="level-btn active" onclick="switchToLevel(1)">🎮 1</button>
+            <button class="level-btn" onclick="switchToLevel(2)">🎮 2</button>
+            <button class="level-btn" onclick="switchToLevel(3)">🎮 3</button>
         </div>
         
         <div class="image-zone" id="imageZone">
@@ -247,10 +307,10 @@
         
         <div class="items-container" id="itemsContainer"></div>
         
-        <button class="reset-btn" onclick="resetGame()">🔄 СБРОСИТЬ ВСЁ</button>
+        <button class="reset-btn" onclick="resetGame()">🔄 СБРОС</button>
         
         <div class="coords-hint" id="coordsHint">
-            👆 Кликай по предметам - координаты появятся в консоли (F12)
+            👆 Нажми F12 для координат
         </div>
     </div>
 
@@ -283,7 +343,7 @@
             { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
         ];
         
-        // УРОВЕНЬ 3 - С ТВОИМИ НОВЫМИ КООРДИНАТАМИ
+        // УРОВЕНЬ 3
         const level3Items = [
             { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
             { name: "ЗЕЛЕНЫЙГРАФИН", file: "игра3/зеленыйграфин.png", x: 494, y: 137, radius: 50, found: false },
@@ -315,7 +375,7 @@
             itemsContainer.innerHTML = html;
 
             if (items.every(item => item.found)) {
-                messageDiv.innerHTML = '🎉 ТЫ НАШЁЛ ВСЕ ПРЕДМЕТЫ! ПОЗДРАВЛЯЕМ! 🎉';
+                messageDiv.innerHTML = '🎉 ВСЁ НАШЁЛ! ПОЗДРАВЛЯЮ! 🎉';
             } else {
                 messageDiv.innerHTML = '';
             }
@@ -336,15 +396,12 @@
             if (level === 1) {
                 image.src = 'игра1/игра.jpg';
                 items = level1Items;
-                coordsHint.innerHTML = '👆 Уровень 1: Найди все предметы';
             } else if (level === 2) {
                 image.src = 'игра2/игра2.jpg';
                 items = level2Items;
-                coordsHint.innerHTML = '👆 Уровень 2: Найди все предметы';
             } else if (level === 3) {
                 image.src = 'игра3/игра3.jpg';
                 items = level3Items;
-                coordsHint.innerHTML = '👆 Уровень 3: Найди все предметы';
             }
             
             items.forEach(item => item.found = false);
@@ -357,7 +414,7 @@
             const institute = document.getElementById('institute').value.trim();
             
             if (name && institute) {
-                alert(`✅ Спасибо, ${name} из ${institute}!`);
+                alert(`✅ Привет, ${name} (${institute})!`);
             } else {
                 alert('❌ Введите имя и институт!');
             }
