@@ -270,22 +270,30 @@
             { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
         ];
         
-        // УРОВЕНЬ 2 - С ТВОИМИ НОВЫМИ КООРДИНАТАМИ (все с .png)
+        // УРОВЕНЬ 2
         const level2Items = [
             { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 50, found: false },
             { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
             { name: "СЕРДЕЧКО", file: "игра2/сердечко.png", x: 393, y: 453, radius: 50, found: false },
-            { name: "МАСКА", file: "игра2/масказамена.png", x: 264, y: 489, radius: 50, found: false },
+            { name: "МАСКА", file: "игра2/маска.png", x: 264, y: 489, radius: 50, found: false },
             { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 55, found: false },
             { name: "СКАЛКИ", file: "игра2/скалки.png", x: 439, y: 850, radius: 50, found: false },
             { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 55, found: false },
-            { name: "ЧУЧЕЛО2", file: "игра2/чучелозамена.png", x: 465, y: 508, radius: 50, found: false },
+            { name: "ЧУЧЕЛО2", file: "игра2/чучело2.png", x: 465, y: 508, radius: 50, found: false },
             { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
         ];
         
-        // УРОВЕНЬ 3 - пока пустой
+        // УРОВЕНЬ 3 - РЕЖИМ СБОРА КООРДИНАТ
         const level3Items = [
-            { name: "ПРЕДМЕТ 1", file: "игра3/предмет1.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "ПРЕДМЕТ 1", file: "игра3/предмет1.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 2", file: "игра3/предмет2.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 3", file: "игра3/предмет3.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 4", file: "игра3/предмет4.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 5", file: "игра3/предмет5.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 6", file: "игра3/предмет6.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 7", file: "игра3/предмет7.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 8", file: "игра3/предмет8.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 9", file: "игра3/предмет9.png", x: 0, y: 0, radius: 50, found: false }
         ];
 
         let items = level1Items;
@@ -328,15 +336,15 @@
             if (level === 1) {
                 image.src = 'игра1/игра.jpg';
                 items = level1Items;
-                coordsHint.innerHTML = '👆 Кликай по предметам первого уровня';
+                coordsHint.innerHTML = '👆 Уровень 1: Найди все предметы';
             } else if (level === 2) {
                 image.src = 'игра2/игра2.jpg';
                 items = level2Items;
-                coordsHint.innerHTML = '🎯 УРОВЕНЬ 2: Кликай по предметам (картина, часики, сердечко и т.д.)';
+                coordsHint.innerHTML = '👆 Уровень 2: Найди все предметы';
             } else if (level === 3) {
                 image.src = 'игра3/игра3.jpg';
                 items = level3Items;
-                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 3 УРОВНЯ';
+                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ: Кликай по предметам и записывай значения из консоли (F12)';
             }
             
             items.forEach(item => item.found = false);
@@ -407,5 +415,3 @@
     </script>
 </body>
 </html>
-
-
