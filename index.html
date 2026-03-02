@@ -97,7 +97,6 @@
             border: 4px solid #a6896b;
         }
         
-        /* КАРТИНКИ ПРЕДМЕТОВ С БЕЖЕВОЙ РАМОЧКОЙ */
         .item-image {
             width: 250px;
             height: 250px;
@@ -172,6 +171,14 @@
             font-weight: bold;
         }
 
+        .coords-hint {
+            text-align: center;
+            color: #8b6f50;
+            font-size: 18px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .game-container {
                 padding: 15px;
@@ -220,6 +227,11 @@
         <div class="items-container" id="itemsContainer"></div>
         
         <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
+        
+        <!-- Подсказка для сбора координат -->
+        <div class="coords-hint" id="coordsHint">
+            👆 Кликай по предметам - координаты появятся в консоли (F12)
+        </div>
     </div>
 
     <script>
@@ -238,10 +250,17 @@
             { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
         ];
         
-        // УРОВЕНЬ 2 - пока пустой (ты добавишь координаты)
+        // УРОВЕНЬ 2 - пока без координат (ты их соберешь)
         const level2Items = [
             { name: "ПРЕДМЕТ1", file: "игра2/предмет1.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ2", file: "игра2/предмет2.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "ПРЕДМЕТ2", file: "игра2/предмет2.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ3", file: "игра2/предмет3.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ4", file: "игра2/предмет4.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ5", file: "игра2/предмет5.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ6", file: "игра2/предмет6.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ7", file: "игра2/предмет7.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ8", file: "игра2/предмет8.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ9", file: "игра2/предмет9.png", x: 0, y: 0, radius: 50, found: false }
         ];
         
         // УРОВЕНЬ 3 - пока пустой
@@ -258,6 +277,7 @@
         const messageDiv = document.getElementById('message');
         const nextLevelBtn = document.getElementById('nextLevelBtn');
         const levelIndicator = document.getElementById('levelIndicator');
+        const coordsHint = document.getElementById('coordsHint');
 
         function updateItemsList() {
             let html = '';
@@ -289,12 +309,13 @@
             if (currentLevel === 1) {
                 currentLevel = 2;
                 levelIndicator.textContent = 'УРОВЕНЬ 2';
-                image.src = 'игра2/2игра.jpg';
+                image.src = 'игра2/игра2.jpg';  // ИСПРАВЛЕНО: игра2.jpg
                 items = level2Items;
+                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ: Кликай по предметам и записывай значения из консоли (F12)';
             } else if (currentLevel === 2) {
                 currentLevel = 3;
                 levelIndicator.textContent = 'УРОВЕНЬ 3';
-                image.src = 'игра3/3игра.jpg';
+                image.src = 'игра3/игра3.jpg';
                 items = level3Items;
             }
             
@@ -321,10 +342,11 @@
 
             const scaleX = image.naturalWidth / rect.width;
             const scaleY = image.naturalHeight / rect.height;
-            const imgX = clickX * scaleX;
-            const imgY = clickY * scaleY;
+            const imgX = Math.round(clickX * scaleX);
+            const imgY = Math.round(clickY * scaleY);
 
-            console.log(`Уровень ${currentLevel}: X=${Math.round(imgX)}, Y=${Math.round(imgY)}`);
+            // ВЫВОД В КОНСОЛЬ - то что тебе нужно скопировать
+            console.log(`%c🔴 УРОВЕНЬ ${currentLevel}: X=${imgX}, Y=${imgY}`, 'background: #8b6f50; color: white; padding: 2px 5px; border-radius: 5px;');
 
             items.forEach(item => {
                 if (!item.found) {
@@ -334,6 +356,7 @@
                     
                     if (distance < item.radius) {
                         item.found = true;
+                        console.log(`✅ Найден: ${item.name}`);
                     }
                 }
             });
@@ -351,6 +374,7 @@
             document.getElementById('firstName').value = '';
             document.getElementById('institute').value = '';
             nextLevelBtn.style.display = 'none';
+            coordsHint.innerHTML = '👆 Кликай по предметам - координаты появятся в консоли (F12)';
         }
 
         image.onload = () => {
