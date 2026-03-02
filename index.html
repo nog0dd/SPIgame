@@ -15,15 +15,15 @@
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 30px;
+            padding: 20px;
         }
         .game-container {
             background: #e6d5b8;
             border-radius: 50px;
-            padding: 35px;
+            padding: 30px;
             border: 6px solid #c4a27a;
             box-shadow: 0 30px 40px rgba(0,0,0,0.3);
-            max-width: 1400px;
+            max-width: 1600px;
             width: 100%;
         }
         
@@ -31,16 +31,16 @@
             background: #d4b595;
             border-radius: 60px;
             padding: 20px 30px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
             border: 3px solid #a6896b;
         }
         
         .player-form input {
-            padding: 15px 25px;
+            padding: 12px 20px;
             font-size: 18px;
             border-radius: 50px;
             border: 3px solid #8b6f50;
@@ -52,19 +52,20 @@
             background: #8b6f50;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 20px;
+            padding: 12px 35px;
+            font-size: 18px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
             border: 3px solid #e9b87a;
         }
         
+        /* ГЛАВНАЯ КАРТИНКА - УВЕЛИЧЕНА */
         .image-zone {
             position: relative;
-            width: 900px;
-            height: 650px;
-            margin: 0 auto;
+            width: 1100px;        /* Было 900px */
+            height: 800px;         /* Было 650px */
+            margin: 0 auto 25px auto;
             border-radius: 40px;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -81,36 +82,31 @@
             background: #2a3a4a;
         }
         
-        /* КОНТЕЙНЕР ДЛЯ МАЛЕНЬКИХ КАРТИНОК */
+        /* КОНТЕЙНЕР ДЛЯ КАРТИНОК ПРЕДМЕТОВ */
         .items-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-            padding: 20px;
+            gap: 20px;
+            margin: 25px 0;
+            padding: 25px;
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
         }
         
-        .item-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90px;
-        }
-        
+        /* КАРТИНКИ ПРЕДМЕТОВ - ЕЩЁ КРУПНЕЕ */
         .item-image {
-            width: 70px;
-            height: 70px;
+            width: 120px;         /* Было 100px */
+            height: 120px;        /* Было 100px */
             object-fit: contain;
             transition: 0.3s;
             filter: brightness(1);
-            border-radius: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 5px;
-            border: 2px solid #8b6f50;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.3);
+            padding: 10px;
+            border: 4px solid #8b6f50;
+            margin: 5px;
         }
         
         .item-image.found {
@@ -120,20 +116,13 @@
             border-color: #5f9ea0;
         }
         
-        .item-label {
-            color: #4a3729;
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-        
         #message {
             text-align: center;
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
             color: #4a3729;
             margin: 20px 0;
-            min-height: 50px;
+            min-height: 60px;
         }
         
         .reset-btn {
@@ -141,18 +130,18 @@
             border: none;
             font-size: 24px;
             font-weight: bold;
-            padding: 15px 40px;
+            padding: 15px 50px;
             border-radius: 60px;
             cursor: pointer;
             color: white;
             border: 3px solid #e9b87a;
-            margin: 0 auto;
+            margin: 10px auto 0;
             display: block;
         }
         
         .instruction {
             color: #4a3729;
-            font-size: 22px;
+            font-size: 24px;
             margin-bottom: 20px;
             text-align: center;
             font-weight: bold;
@@ -169,22 +158,21 @@
             <button onclick="savePlayerInfo()">💾 СОХРАНИТЬ</button>
         </div>
         
+        <!-- УВЕЛИЧЕННАЯ ГЛАВНАЯ КАРТИНКА -->
         <div class="image-zone" id="imageZone">
             <img src="игра.jpg" id="gameImage" alt="Найди предметы">
         </div>
         
         <div id="message"></div>
         
-        <!-- КОНТЕЙНЕР С ПРЕДМЕТАМИ (9 штук) -->
+        <!-- КОНТЕЙНЕР С ПРЕДМЕТАМИ (только картинки) -->
         <div class="items-container" id="itemsContainer"></div>
         
         <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
     </div>
 
     <script>
-        // --------------------------------------------------------
-        // ТВОИ ПРЕДМЕТЫ (9 штук) - координаты и имена файлов
-        // --------------------------------------------------------
+        // ТВОИ ПРЕДМЕТЫ (9 штук)
         const items = [
             { name: "СУНДУК", file: "сундук.png", x: 391, y: 736, radius: 50, found: false },
             { name: "ЗАЯЦ", file: "заяц.png", x: 183, y: 344, radius: 45, found: false },
@@ -197,27 +185,20 @@
             { name: "РАМКА", file: "рамка.png", x: 442, y: 335, radius: 45, found: false }
         ];
 
-        // DOM элементы
         const imageZone = document.getElementById('imageZone');
         const image = document.getElementById('gameImage');
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
-        // ОТОБРАЖЕНИЕ СПИСКА ПРЕДМЕТОВ
+        // ОТОБРАЖЕНИЕ ПРЕДМЕТОВ (только картинки, без названий)
         function updateItemsList() {
             let html = '';
             items.forEach(item => {
                 const foundClass = item.found ? 'found' : '';
-                html += `
-                    <div class="item-wrapper">
-                        <img src="${item.file}" class="item-image ${foundClass}" alt="${item.name}">
-                        <span class="item-label">${item.name}</span>
-                    </div>
-                `;
+                html += `<img src="${item.file}" class="item-image ${foundClass}" alt="${item.name}">`;
             });
             itemsContainer.innerHTML = html;
 
-            // Проверка победы
             if (items.every(item => item.found)) {
                 messageDiv.innerHTML = '🎉 ТЫ НАШЁЛ ВСЕ ПРЕДМЕТЫ! ПОЗДРАВЛЯЕМ! 🎉';
             } else {
@@ -225,32 +206,27 @@
             }
         }
 
-        // СОХРАНЕНИЕ ИНФОРМАЦИИ ОБ ИГРОКЕ
         function savePlayerInfo() {
             const name = document.getElementById('firstName').value.trim();
             const institute = document.getElementById('institute').value.trim();
             
             if (name && institute) {
                 alert(`✅ Спасибо, ${name} из ${institute}!`);
-                // Здесь потом будет отправка в базу данных
             } else {
                 alert('❌ Введите имя и институт!');
             }
         }
 
-        // ОБРАБОТКА КЛИКА ПО КАРТИНКЕ
         imageZone.addEventListener('click', (e) => {
             const rect = imageZone.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
 
-            // Масштабируем координаты
             const scaleX = image.naturalWidth / rect.width;
             const scaleY = image.naturalHeight / rect.height;
             const imgX = clickX * scaleX;
             const imgY = clickY * scaleY;
 
-            // Проверяем каждый предмет
             items.forEach(item => {
                 if (!item.found) {
                     const dx = imgX - item.x;
@@ -266,7 +242,6 @@
             updateItemsList();
         });
 
-        // СБРОС ИГРЫ
         function resetGame() {
             items.forEach(item => item.found = false);
             updateItemsList();
@@ -274,7 +249,6 @@
             document.getElementById('institute').value = '';
         }
 
-        // ЗАГРУЗКА
         image.onload = () => {
             console.log('Картинка загружена');
             updateItemsList();
