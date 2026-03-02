@@ -283,17 +283,17 @@
             { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
         ];
         
-        // УРОВЕНЬ 3 - РЕЖИМ СБОРА КООРДИНАТ
+        // УРОВЕНЬ 3 - С ТВОИМИ НОВЫМИ КООРДИНАТАМИ
         const level3Items = [
-            { name: "ПРЕДМЕТ 1", file: "игра3/предмет1.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 2", file: "игра3/предмет2.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 3", file: "игра3/предмет3.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 4", file: "игра3/предмет4.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 5", file: "игра3/предмет5.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 6", file: "игра3/предмет6.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 7", file: "игра3/предмет7.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 8", file: "игра3/предмет8.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 9", file: "игра3/предмет9.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
+            { name: "ЗЕЛЕНЫЙГРАФИН", file: "игра3/зеленыйграфин.png", x: 494, y: 137, radius: 50, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 55, found: false },
+            { name: "ЧАСЫ2", file: "игра3/часы2.png", x: 383, y: 753, radius: 50, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 50, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 50, found: false },
+            { name: "УДОЧКА", file: "игра3/удочка.png", x: 421, y: 913, radius: 55, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 50, found: false },
+            { name: "ВАЗА", file: "игра3/ваза.png", x: 250, y: 324, radius: 50, found: false }
         ];
 
         let items = level1Items;
@@ -344,7 +344,7 @@
             } else if (level === 3) {
                 image.src = 'игра3/игра3.jpg';
                 items = level3Items;
-                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ: Кликай по предметам и записывай значения из консоли (F12)';
+                coordsHint.innerHTML = '👆 Уровень 3: Найди все предметы';
             }
             
             items.forEach(item => item.found = false);
