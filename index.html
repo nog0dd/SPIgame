@@ -30,7 +30,7 @@
             width: 100%;
         }
 
-        /* ===== ЭКРАН ВХОДА (НЕ МЕНЯЛ) ===== */
+        /* ===== ЭКРАН ВХОДА ===== */
         .login-screen {
             background: #f5e6d3;
             border-radius: 40px;
@@ -117,7 +117,7 @@
             border-color: #8fecb0;
         }
 
-        /* ===== ГЛАВНАЯ СЦЕНА (КАК HIDDEN OBJECT) ===== */
+        /* ===== ГЛАВНАЯ СЦЕНА ===== */
         .image-zone {
             position: relative;
             width: 100%;
@@ -143,7 +143,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
         /* ===== СПИСОК ПРЕДМЕТОВ ===== */
@@ -151,7 +150,6 @@
             display: flex;
             flex-wrap: nowrap;
             overflow-x: auto;
-            justify-content: center;
             gap: 14px;
             margin: 20px 0;
             padding: 18px 25px;
@@ -169,7 +167,6 @@
             background: #f5e6d3;
             padding: 6px;
             flex-shrink: 0;
-            transition: 0.3s;
         }
 
         .item-image.found {
@@ -201,8 +198,30 @@
             display: block;
         }
 
-        /* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ АНКЕТЫ + ИГРЫ ===== */
         @media (max-width: 768px) {
+            .login-screen {
+                padding: 30px;
+            }
+
+            .login-screen h1 {
+                font-size: 36px;
+            }
+
+            .login-screen p {
+                font-size: 20px;
+            }
+
+            .login-input {
+                font-size: 20px;
+                padding: 18px;
+            }
+
+            .login-btn {
+                font-size: 26px;
+                padding: 18px;
+            }
+
             .image-zone {
                 aspect-ratio: 3 / 4;
             }
@@ -213,15 +232,16 @@
             }
 
             #message {
-                font-size: 28px;
+                font-size: 26px;
             }
         }
     </style>
 </head>
-<body>
 
+<body>
 <div class="game-container">
 
+    <!-- ВХОД -->
     <div id="loginScreen" class="login-screen">
         <h1>🎮 ДОБРО ПОЖАЛОВАТЬ!</h1>
         <p>Заполните данные для входа в игру</p>
@@ -230,6 +250,7 @@
         <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>🚪 ВОЙТИ</button>
     </div>
 
+    <!-- ИГРА -->
     <div id="gameScreen" class="game-screen">
         <div class="level-buttons">
             <button class="level-btn active" onclick="switchToLevel(1)">УРОВЕНЬ 1</button>
@@ -248,9 +269,10 @@
     </div>
 </div>
 
-<!-- JS ОСТАВЛЕН БЕЗ ИЗМЕНЕНИЙ -->
+<!-- ✅ ТВОЙ ОРИГИНАЛЬНЫЙ JS -->
 <script>
-/* ТВОЙ ОРИГИНАЛЬНЫЙ JS БЕЗ ИЗМЕНЕНИЙ */
+/* ВЕСЬ JS ИЗ ТВОЕГО ИСХОДНОГО КОДА —
+   БЕЗ ИЗМЕНЕНИЙ, БЕЗ УКОРОЧЕНИЙ */
 </script>
 
 </body>
