@@ -3,262 +3,452 @@
 <head>
     <title>🔍 Найди предметы</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background: #f5ebe0;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 20px;
         }
-
         .game-container {
             background: #e6d5b8;
-            border-radius: 40px;
-            padding: 25px;
+            border-radius: 50px;
+            padding: 30px;
             border: 6px solid #c4a27a;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* ---------- ГЛАВНАЯ КАРТИНКА ---------- */
-
-        .image-zone {
-            position: relative;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.3);
+            max-width: 1800px;
             width: 100%;
-            height: 75vh; /* 🔥 теперь почти весь экран */
-            max-height: 900px;
-            margin: 0 auto 25px auto;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 6px solid #b5926a;
-            cursor: crosshair;
-            background: #000;
         }
-
-        #gameImage {
+        
+        /* ЭКРАН ВХОДА (ПЕРВЫЙ ЭКРАН) */
+        .login-screen {
+            background: #f5e6d3;
+            border-radius: 40px;
+            padding: 60px;
+            border: 4px solid #a6896b;
+            max-width: 700px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        
+        .login-screen h1 {
+            font-size: 56px;
+            color: #4a3729;
+            margin-bottom: 30px;
+        }
+        
+        .login-screen p {
+            font-size: 26px;
+            color: #8b6f50;
+            margin-bottom: 40px;
+        }
+        
+        .login-input {
             width: 100%;
-            height: 100%;
-            object-fit: cover; /* 🔥 как в настоящих hidden object */
+            padding: 25px;
+            font-size: 26px;
+            border-radius: 70px;
+            border: 4px solid #8b6f50;
+            background: white;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .login-btn {
+            background: #5fa87f;
+            color: white;
+            border: none;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 25px 50px;
+            border-radius: 80px;
+            cursor: pointer;
+            border: 4px solid #8fecb0;
+            width: 100%;
+            transition: 0.2s;
+        }
+        
+        .login-btn:hover {
+            transform: scale(1.02);
+            background: #6fb98f;
+        }
+        
+        .login-btn:disabled {
+            background: #b5926a;
+            border-color: #e9b87a;
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* ИГРОВОЙ ЭКРАН (ПОСЛЕ ВХОДА) */
+        .game-screen {
+            display: none;
+        }
+        
+        .game-screen.active {
             display: block;
         }
-
-        /* ---------- КНОПКИ УРОВНЕЙ ---------- */
-
+        
+        /* КНОПКИ УРОВНЕЙ */
         .level-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 20px 0;
             flex-wrap: wrap;
         }
-
+        
         .level-btn {
             background: #b5926a;
             border: none;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
-            padding: 12px 25px;
-            border-radius: 50px;
+            padding: 20px 50px;
+            border-radius: 70px;
             cursor: pointer;
             color: white;
-            border: 3px solid #e9b87a;
+            border: 4px solid #e9b87a;
+            transition: 0.2s;
         }
-
+        
         .level-btn.active {
             background: #5fa87f;
             border-color: #8fecb0;
         }
-
-        /* ---------- ПРЕДМЕТЫ ---------- */
-
+        
+        /* ГЛАВНАЯ КАРТИНКА - ЕЩЁ КРУПНЕЕ */
+        .image-zone {
+            position: relative;
+            width: 100%;
+            max-width: 1300px;  /* Увеличил с 1100px */
+            height: auto;
+            aspect-ratio: 1300/900;  /* Пропорции под новый размер */
+            margin: 0 auto 30px auto;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 8px solid #b5926a;
+            cursor: crosshair;
+            background: #f5e6d3;
+        }
+        
+        #gameImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: transparent;
+        }
+        
+        /* КОНТЕЙНЕР ПРЕДМЕТОВ */
         .items-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            margin: 20px 0;
-            padding: 15px;
+            gap: 12px;
+            margin: 30px 0;
+            padding: 25px;
             background: #d4b595;
-            border-radius: 30px;
+            border-radius: 60px;
+            border: 4px solid #a6896b;
         }
-
+        
         .item-image {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            border-radius: 12px;
-            border: 3px solid #e9d4b0;
-            background: #f5e6d3;
-            padding: 4px;
+            width: 280px;
+            height: 280px;
+            max-width: calc(25% - 12px);
+            min-width: 140px;
+            object-fit: cover;
             transition: 0.3s;
+            filter: brightness(1);
+            border-radius: 25px;
+            margin: 0;
+            border: 5px solid #e9d4b0;
+            background: #f5e6d3;
+            padding: 8px;
         }
-
+        
         .item-image.found {
-            filter: grayscale(1) brightness(0.4);
+            filter: brightness(0.3) grayscale(1);
             opacity: 0.6;
+            border-color: #a6896b;
         }
-
+        
         #message {
             text-align: center;
-            font-size: 28px;
+            font-size: 44px;
             font-weight: bold;
             color: #4a3729;
-            margin: 15px 0;
-            min-height: 40px;
+            margin: 25px 0;
+            min-height: 80px;
         }
-
+        
         .reset-btn {
             background: #b5926a;
             border: none;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
-            padding: 12px 25px;
-            border-radius: 50px;
+            padding: 20px 50px;
+            border-radius: 70px;
             cursor: pointer;
             color: white;
-            border: 3px solid #e9b87a;
-            margin: 10px auto;
+            border: 4px solid #e9b87a;
+            margin: 20px auto 0;
             display: block;
         }
-
-        /* ---------- МОБИЛЬНАЯ АДАПТАЦИЯ ---------- */
-
+        
+        /* АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
         @media (max-width: 768px) {
-
             .game-container {
-                padding: 10px;
-                border-radius: 20px;
+                padding: 15px;
             }
-
-            .image-zone {
-                height: 70vh; /* 🔥 огромная картинка */
-                border-radius: 20px;
-                border-width: 4px;
+            
+            .login-screen {
+                padding: 30px;
             }
-
-            .item-image {
-                width: 70px;
-                height: 70px;
+            
+            .login-screen h1 {
+                font-size: 40px;
             }
-
+            
+            .login-btn {
+                font-size: 28px;
+                padding: 20px 30px;
+            }
+            
             .level-btn {
-                font-size: 16px;
-                padding: 10px 18px;
+                font-size: 22px;
+                padding: 15px 30px;
             }
-
+            
+            .item-image {
+                width: 180px;
+                height: 180px;
+            }
+            
             #message {
-                font-size: 20px;
+                font-size: 32px;
             }
         }
     </style>
 </head>
-
 <body>
-
-<div class="game-container">
-
-    <div class="level-buttons">
-        <button class="level-btn active" onclick="switchToLevel(1)">УРОВЕНЬ 1</button>
-[03.03.2026 0:22] nogodd: <button class="level-btn" onclick="switchToLevel(2)">УРОВЕНЬ 2</button>
-        <button class="level-btn" onclick="switchToLevel(3)">УРОВЕНЬ 3</button>
+    <div class="game-container">
+        <!-- ЭКРАН ВХОДА (ПЕРВЫЙ ЭКРАН) -->
+        <div id="loginScreen" class="login-screen">
+            <h1>🎮 ДОБРО ПОЖАЛОВАТЬ!</h1>
+            <p>Заполните данные для входа в игру</p>
+            <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
+            <input type="text" id="loginInstitute" class="login-input" placeholder="Институт" oninput="checkLoginForm()">
+            <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>🚪 ВОЙТИ</button>
+        </div>
+        
+        <!-- ИГРОВОЙ ЭКРАН -->
+        <div id="gameScreen" class="game-screen">
+            <div class="level-buttons">
+                <button class="level-btn active" onclick="switchToLevel(1)">УРОВЕНЬ 1</button>
+                <button class="level-btn" onclick="switchToLevel(2)">УРОВЕНЬ 2</button>
+                <button class="level-btn" onclick="switchToLevel(3)">УРОВЕНЬ 3</button>
+            </div>
+            
+            <div class="image-zone" id="imageZone">
+                <img src="игра1/игра.jpg" id="gameImage" alt="Найди предметы">
+            </div>
+            
+            <div id="message"></div>
+            
+            <div class="items-container" id="itemsContainer"></div>
+            
+            <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
+        </div>
     </div>
 
-    <div class="image-zone" id="imageZone">
-        <img src="игра1/игра.jpg" id="gameImage">
-    </div>
-
-    <div id="message"></div>
-
-    <div class="items-container" id="itemsContainer"></div>
-
-    <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
-
-</div>
-
-<script>
-let currentLevel = 1;
-
-const level1Items = [
-    { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
-    { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 55, found: false },
-    { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 55, found: false }
-];
-
-const level2Items = [];
-const level3Items = [];
-
-let items = level1Items;
-
-const imageZone = document.getElementById('imageZone');
-const image = document.getElementById('gameImage');
-const itemsContainer = document.getElementById('itemsContainer');
-const messageDiv = document.getElementById('message');
-
-function updateItemsList() {
-    let html = '';
-    items.forEach(item => {
-        const foundClass = item.found ? 'found' : '';
-        html += <img src="${item.file}" class="item-image ${foundClass}">;
-    });
-    itemsContainer.innerHTML = html;
-
-    if (items.every(item => item.found)) {
-        messageDiv.innerHTML = '🎉 ТЫ НАШЁЛ ВСЕ ПРЕДМЕТЫ!';
-    } else {
-        messageDiv.innerHTML = '';
-    }
-}
-
-function switchToLevel(level) {
-    currentLevel = level;
-
-    if (level === 1) {
-        image.src = 'игра1/игра.jpg';
-        items = level1Items;
-    }
-
-    items.forEach(item => item.found = false);
-    updateItemsList();
-}
-
-imageZone.addEventListener('click', (e) => {
-    const rect = imageZone.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-
-    const scaleX = image.naturalWidth / rect.width;
-    const scaleY = image.naturalHeight / rect.height;
-    const imgX = Math.round(clickX * scaleX);
-    const imgY = Math.round(clickY * scaleY);
-
-    items.forEach(item => {
-        if (!item.found) {
-            const dx = imgX - item.x;
-            const dy = imgY - item.y;
-            const distance = Math.sqrt(dx*dx + dy*dy);
-            if (distance < item.radius) {
-                item.found = true;
+    <script>
+        // ДАННЫЕ ИГРОКА
+        let currentPlayer = {
+            name: '',
+            institute: ''
+        };
+        
+        // ПРОВЕРКА ФОРМЫ ВХОДА
+        function checkLoginForm() {
+            const name = document.getElementById('loginName').value.trim();
+            const institute = document.getElementById('loginInstitute').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (name && institute) {
+                loginBtn.disabled = false;
+            } else {
+                loginBtn.disabled = true;
             }
         }
-    });
+        
+        // НАЧАЛО ИГРЫ
+        function startGame() {
+            currentPlayer.name = document.getElementById('loginName').value.trim();
+            currentPlayer.institute = document.getElementById('loginInstitute').value.trim();
+            
+            // Прячем экран входа
+            document.getElementById('loginScreen').style.display = 'none';
+            // Показываем игру
+            document.getElementById('gameScreen').classList.add('active');
+            
+            // Сохраняем в список участников (если нужно)
+            saveParticipant();
+        }
+        
+        // СОХРАНЕНИЕ УЧАСТНИКА (В КОНСОЛЬ, ПОТОМ ДОБАВИМ БАЗУ)
+        function saveParticipant() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
+            
+            console.log('✅ Новый участник:', {
+                name: currentPlayer.name,
+                institute: currentPlayer.institute,
+                date: dateStr
+            });
+        }
+        
+        // ============================================
+        // ЛОГИКА ИГРЫ (ТВОИ УРОВНИ)
+        // ============================================
+        let currentLevel = 1;
+        
+        const level1Items = [
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
+            { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 55, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 55, found: false },
+            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 60, found: false },
+            { name: "ЯЩИК", file: "игра1/ящик.png", x: 530, y: 549, radius: 60, found: false },
+            { name: "КОРЗИНА", file: "игра1/корзина.png", x: 398, y: 451, radius: 55, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 55, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 55, found: false },
+            { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
+        ];
+        
+        const level2Items = [
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 50, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
+            { name: "СЕРДЕЧКО", file: "игра2/сердечко.png", x: 393, y: 453, radius: 50, found: false },
+            { name: "МАСКА", file: "игра2/маска.png", x: 264, y: 489, radius: 50, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 55, found: false },
+            { name: "СКАЛКИ", file: "игра2/скалки.png", x: 439, y: 850, radius: 50, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 55, found: false },
+            { name: "ЧУЧЕЛО2", file: "игра2/чучело2.png", x: 465, y: 508, radius: 50, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
+        ];
+        
+        const level3Items = [
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
+            { name: "ЗЕЛЕНЫЙГРАФИН", file: "игра3/зеленыйграфин.png", x: 494, y: 137, radius: 50, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 55, found: false },
+            { name: "ЧАСЫ2", file: "игра3/часы2.png", x: 383, y: 753, radius: 50, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 50, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 50, found: false },
+            { name: "УДОЧКА", file: "игра3/удочка.png", x: 421, y: 913, radius: 55, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 50, found: false },
+            { name: "ВАЗА", file: "игра3/ваза.png", x: 250, y: 324, radius: 50, found: false }
+        ];
 
-    updateItemsList();
-});
+        let items = level1Items;
 
-function resetGame() {
-    items.forEach(item => item.found = false);
-    updateItemsList();
-}
+        const imageZone = document.getElementById('imageZone');
+        const image = document.getElementById('gameImage');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const messageDiv = document.getElementById('message');
 
-updateItemsList();
-</script>
+        function updateItemsList() {
+            let html = '';
+            items.forEach(item => {
+                const foundClass = item.found ? 'found' : '';
+                html += `<img src="${item.file}" class="item-image ${foundClass}" alt="${item.name}">`;
+            });
+            itemsContainer.innerHTML = html;
 
+            if (items.every(item => item.found)) {
+                messageDiv.innerHTML = '🎉 ТЫ НАШЁЛ ВСЕ ПРЕДМЕТЫ! ПОЗДРАВЛЯЕМ! 🎉';
+            } else {
+                messageDiv.innerHTML = '';
+            }
+        }
+
+        function switchToLevel(level) {
+            currentLevel = level;
+            
+            document.querySelectorAll('.level-btn').forEach((btn, index) => {
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            if (level === 1) {
+                image.src = 'игра1/игра.jpg';
+                items = level1Items;
+            } else if (level === 2) {
+                image.src = 'игра2/игра2.jpg';
+                items = level2Items;
+            } else if (level === 3) {
+                image.src = 'игра3/игра3.jpg';
+                items = level3Items;
+            }
+            
+            items.forEach(item => item.found = false);
+            updateItemsList();
+            messageDiv.innerHTML = '';
+        }
+
+        imageZone.addEventListener('click', (e) => {
+            const rect = imageZone.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            const scaleX = image.naturalWidth / rect.width;
+            const scaleY = image.naturalHeight / rect.height;
+            const imgX = Math.round(clickX * scaleX);
+            const imgY = Math.round(clickY * scaleY);
+
+            items.forEach(item => {
+                if (!item.found) {
+                    const dx = imgX - item.x;
+                    const dy = imgY - item.y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (distance < item.radius) {
+                        item.found = true;
+                    }
+                }
+            });
+
+            updateItemsList();
+        });
+
+        function resetGame() {
+            level1Items.forEach(item => item.found = false);
+            level2Items.forEach(item => item.found = false);
+            level3Items.forEach(item => item.found = false);
+            
+            switchToLevel(1);
+        }
+
+        image.onload = () => {
+            updateItemsList();
+        };
+
+        if (image.complete) {
+            updateItemsList();
+        }
+
+        updateItemsList();
+    </script>
 </body>
 </html>
-
