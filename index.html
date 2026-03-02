@@ -233,7 +233,6 @@
             <button onclick="savePlayerInfo()">💾 СОХРАНИТЬ</button>
         </div>
         
-        <!-- КНОПКИ БЫСТРОГО ПЕРЕКЛЮЧЕНИЯ УРОВНЕЙ -->
         <div class="level-buttons">
             <button class="level-btn active" onclick="switchToLevel(1)">🎮 УРОВЕНЬ 1</button>
             <button class="level-btn" onclick="switchToLevel(2)">🎮 УРОВЕНЬ 2</button>
@@ -271,17 +270,17 @@
             { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
         ];
         
-        // УРОВЕНЬ 2 - пока без координат
+        // УРОВЕНЬ 2 - С ТВОИМИ НОВЫМИ КООРДИНАТАМИ (все с .png)
         const level2Items = [
-            { name: "ПРЕДМЕТ 1", file: "игра2/предмет1.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 2", file: "игра2/предмет2.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 3", file: "игра2/предмет3.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 4", file: "игра2/предмет4.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 5", file: "игра2/предмет5.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 6", file: "игра2/предмет6.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 7", file: "игра2/предмет7.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 8", file: "игра2/предмет8.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ 9", file: "игра2/предмет9.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 50, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
+            { name: "СЕРДЕЧКО", file: "игра2/сердечко.png", x: 393, y: 453, radius: 50, found: false },
+            { name: "МАСКА", file: "игра2/маска.png", x: 264, y: 489, radius: 50, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 55, found: false },
+            { name: "СКАЛКИ", file: "игра2/скалки.png", x: 439, y: 850, radius: 50, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 55, found: false },
+            { name: "ЧУЧЕЛО2", file: "игра2/чучело2.png", x: 465, y: 508, radius: 50, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
         ];
         
         // УРОВЕНЬ 3 - пока пустой
@@ -318,7 +317,6 @@
             currentLevel = level;
             levelIndicator.textContent = `УРОВЕНЬ ${level}`;
             
-            // Обновляем активную кнопку
             levelBtns.forEach((btn, index) => {
                 if (index + 1 === level) {
                     btn.classList.add('active');
@@ -327,24 +325,21 @@
                 }
             });
             
-            // Меняем картинку и предметы в зависимости от уровня
             if (level === 1) {
                 image.src = 'игра1/игра.jpg';
                 items = level1Items;
-                coordsHint.innerHTML = '👆 Кликай по предметам - координаты появятся в консоли (F12)';
+                coordsHint.innerHTML = '👆 Кликай по предметам первого уровня';
             } else if (level === 2) {
                 image.src = 'игра2/игра2.jpg';
                 items = level2Items;
-                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 2 УРОВНЯ: Кликай по предметам и записывай значения из консоли (F12)';
+                coordsHint.innerHTML = '🎯 УРОВЕНЬ 2: Кликай по предметам (картина, часики, сердечко и т.д.)';
             } else if (level === 3) {
                 image.src = 'игра3/игра3.jpg';
                 items = level3Items;
-                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 3 УРОВНЯ: Кликай по предметам и записывай значения из консоли (F12)';
+                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 3 УРОВНЯ';
             }
             
-            // Сбрасываем статус found для всех предметов
             items.forEach(item => item.found = false);
-            
             updateItemsList();
             messageDiv.innerHTML = '';
         }
@@ -370,7 +365,6 @@
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
-            // ВЫВОД В КОНСОЛЬ
             console.log(`%c🔴 УРОВЕНЬ ${currentLevel}: X=${imgX}, Y=${imgY}`, 'background: #8b6f50; color: white; padding: 2px 5px; border-radius: 5px;');
 
             items.forEach(item => {
@@ -390,15 +384,12 @@
         });
 
         function resetGame() {
-            // Сбрасываем все предметы на всех уровнях
             level1Items.forEach(item => item.found = false);
             level2Items.forEach(item => item.found = false);
             level3Items.forEach(item => item.found = false);
             
-            // Возвращаемся на уровень 1
             switchToLevel(1);
             
-            // Очищаем поля ввода
             document.getElementById('firstName').value = '';
             document.getElementById('institute').value = '';
         }
