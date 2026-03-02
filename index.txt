@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔍 СБОР КООРДИНАТ - 3 уровня (PNG)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5ebe0;  /* БЕЖЕВЫЙ ФОН */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 30px;
+        }
+        .game-container {
+            background: #e6d5b8;
+            border-radius: 50px;
+            padding: 35px;
+            border: 6px solid #c4a27a;
+            box-shadow: 0 30px 40px rgba(0,0,0,0.3);
+            max-width: 1400px;
+            width: 100%;
+        }
+        
+        /* ПОЛЕ ДЛЯ ВВОДА */
+        .player-form {
+            background: #d4b595;
+            border-radius: 60px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border: 3px solid #a6896b;
+        }
+        
+        .player-form input {
+            padding: 15px 25px;
+            font-size: 18px;
+            border-radius: 50px;
+            border: 3px solid #8b6f50;
+            background: #f5e6d3;
+            width: 250px;
+        }
+        
+        .player-form button {
+            background: #8b6f50;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 3px solid #e9b87a;
+        }
+        
+        /* ПЕРЕКЛЮЧАТЕЛЬ УРОВНЕЙ */
+        .level-switch {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .level-btn {
+            background: #d4b595;
+            border: 4px solid #a6896b;
+            color: #4a3729;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .level-btn.active {
+            background: #b5926a;
+            color: white;
+            border-color: #e9b87a;
+            transform: scale(1.05);
+        }
+        
+        .image-zone {
+            position: relative;
+            width: 900px;
+            height: 650px;
+            margin: 0 auto;
+            border-radius: 40px;
+            overflow: hidden;
+            border: 8px solid #b5926a;
+            cursor: crosshair;
+            background: #3a4a5a;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        
+        #gameImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #2a3a4a;
+        }
+        
+        /* ПАНЕЛЬ КООРДИНАТ */
+        .coords-panel {
+            background: #d4b595;
+            border: 4px solid #a6896b;
+            border-radius: 60px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .coords-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a3729;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .current-coords {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e5a4a;
+            background: #f5e6d3;
+            padding: 20px;
+            border-radius: 40px;
+            border: 3px solid #8b6f50;
+            font-family: monospace;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .clicks-history {
+            background: #e6d5b8;
+            border-radius: 30px;
+            padding: 15px;
+            border: 3px solid #a6896b;
+        }
+        
+        .history-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4a3729;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .clear-btn {
+            background: #b5926a;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .click-log {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .click-item {
+            background: #f5e6d3;
+            margin: 5px 0;
+            padding: 10px 15px;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 16px;
+            border-left: 5px solid #8b6f50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-btn {
+            background: #8b6f50;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .reset-btn {
+            background: #b5926a;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 40px;
+            border-radius: 60px;
+            cursor: pointer;
+            color: white;
+            border: 3px solid #e9b87a;
+            margin: 20px auto 0;
+            display: block;
+        }
+        
+        .instruction {
+            color: #4a3729;
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="instruction">🔍 КЛИКАЙ ПО ПРЕДМЕТАМ - КООРДИНАТЫ СОХРАНЯЮТСЯ (PNG)</div>
+        
+        <!-- ФОРМА ДЛЯ ИГРОКА -->
+        <div class="player-form">
+            <input type="text" placeholder="Имя Фамилия" id="firstName">
+            <input type="text" placeholder="Институт" id="institute">
+            <button onclick="savePlayerInfo()">💾 СОХРАНИТЬ</button>
+        </div>
+        
+        <!-- ПЕРЕКЛЮЧЕНИЕ УРОВНЕЙ -->
+        <div class="level-switch">
+            <button class="level-btn active" onclick="switchLevel(1)">УРОВЕНЬ 1</button>
+            <button class="level-btn" onclick="switchLevel(2)">УРОВЕНЬ 2</button>
+            <button class="level-btn" onclick="switchLevel(3)">УРОВЕНЬ 3</button>
+        </div>
+        
+        <!-- КАРТИНКА -->
+        <div class="image-zone" id="imageZone">
+            <img src="level1.png" id="gameImage" alt="Level 1">
+        </div>
+        
+        <!-- ПАНЕЛЬ КООРДИНАТ -->
+        <div class="coords-panel">
+            <div class="coords-title">📍 ТЕКУЩИЕ КООРДИНАТЫ</div>
+            <div class="current-coords" id="coordsDisplay">X: --, Y: --</div>
+            
+            <div class="clicks-history">
+                <div class="history-title">
+                    <span>📋 ИСТОРИЯ КЛИКОВ (УРОВЕНЬ <span id="currentLevelDisplay">1</span>)</span>
+                    <button class="clear-btn" onclick="clearHistory()">ОЧИСТИТЬ</button>
+                </div>
+                <div class="click-log" id="clickLog"></div>
+            </div>
+        </div>
+        
+        <!-- КНОПКА СБРОСА -->
+        <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
+    </div>
+
+    <script>
+        // ТЕКУЩИЙ УРОВЕНЬ
+        let currentLevel = 1;
+        
+        // ХРАНИЛИЩЕ КООРДИНАТ ДЛЯ КАЖДОГО УРОВНЯ
+        let levelClicks = {
+            1: [],
+            2: [],
+            3: []
+        };
+
+        // DOM элементы
+        const imageZone = document.getElementById('imageZone');
+        const image = document.getElementById('gameImage');
+        const coordsDisplay = document.getElementById('coordsDisplay');
+        const clickLog = document.getElementById('clickLog');
+        const currentLevelDisplay = document.getElementById('currentLevelDisplay');
+        const levelBtns = document.querySelectorAll('.level-btn');
+
+        // ПЕРЕКЛЮЧЕНИЕ УРОВНЕЙ
+        function switchLevel(level) {
+            currentLevel = level;
+            
+            // Обновляем активную кнопку
+            levelBtns.forEach((btn, index) => {
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Меняем картинку (PNG)
+            image.src = `level${level}.png`;
+            currentLevelDisplay.textContent = level;
+            
+            // Обновляем историю кликов
+            updateClickLog();
+        }
+
+        // СОХРАНЕНИЕ ИНФОРМАЦИИ ОБ ИГРОКЕ
+        function savePlayerInfo() {
+            const name = document.getElementById('firstName').value;
+            const institute = document.getElementById('institute').value;
+            
+            if (name && institute) {
+                alert(`✅ Игрок сохранен: ${name}, ${institute}`);
+                // Здесь потом будет отправка в базу данных
+            } else {
+                alert('❌ Заполни все поля!');
+            }
+        }
+
+        // ОБРАБОТКА КЛИКА ПО КАРТИНКЕ
+        imageZone.addEventListener('click', (e) => {
+            const rect = imageZone.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            // Масштабируем под размер оригинальной картинки
+            const scaleX = image.naturalWidth / rect.width;
+            const scaleY = image.naturalHeight / rect.height;
+            const imgX = Math.round(clickX * scaleX);
+            const imgY = Math.round(clickY * scaleY);
+
+            // Показываем текущие координаты
+            coordsDisplay.textContent = `X: ${imgX}, Y: ${imgY}`;
+
+            // Сохраняем в историю текущего уровня
+            levelClicks[currentLevel].push({
+                x: imgX,
+                y: imgY,
+                time: new Date().toLocaleTimeString()
+            });
+
+            // Обновляем отображение истории
+            updateClickLog();
+
+            // Выводим в консоль для удобства
+            console.log(`Уровень ${currentLevel}: X=${imgX}, Y=${imgY}`);
+        });
+
+        // ОБНОВЛЕНИЕ ИСТОРИИ КЛИКОВ
+        function updateClickLog() {
+            const clicks = levelClicks[currentLevel];
+            let html = '';
+            
+            if (clicks.length === 0) {
+                html = '<div class="click-item" style="justify-content: center;">Пока нет кликов</div>';
+            } else {
+                clicks.forEach((click, index) => {
+                    html += `
+                        <div class="click-item">
+                            <span>#${index + 1}: X=${click.x}, Y=${click.y} (${click.time})</span>
+                            <button class="copy-btn" onclick="copyCoords(${click.x}, ${click.y})">📋</button>
+                        </div>
+                    `;
+                });
+            }
+            
+            clickLog.innerHTML = html;
+        }
+
+        // КОПИРОВАНИЕ КООРДИНАТ
+        function copyCoords(x, y) {
+            const text = `X=${x}, Y=${y}`;
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`Скопировано: ${text}`);
+            });
+        }
+
+        // ОЧИСТКА ИСТОРИИ ТЕКУЩЕГО УРОВНЯ
+        function clearHistory() {
+            if (confirm(`Очистить историю кликов для уровня ${currentLevel}?`)) {
+                levelClicks[currentLevel] = [];
+                updateClickLog();
+                coordsDisplay.textContent = 'X: --, Y: --';
+            }
+        }
+
+        // СБРОС ВСЕЙ ИГРЫ
+        function resetGame() {
+            if (confirm('Сбросить все уровни?')) {
+                levelClicks = {1: [], 2: [], 3: []};
+                updateClickLog();
+                coordsDisplay.textContent = 'X: --, Y: --';
+                document.getElementById('firstName').value = '';
+                document.getElementById('institute').value = '';
+            }
+        }
+
+        // ИНИЦИАЛИЗАЦИЯ
+        image.onload = () => {
+            console.log(`Уровень ${currentLevel} загружен: ${image.naturalWidth}x${image.naturalHeight}`);
+        };
+
+        // Загружаем первый уровень
+        switchLevel(1);
+    </script>
+</body>
+</html>
