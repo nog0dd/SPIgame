@@ -123,15 +123,15 @@
             border-color: #8fecb0;
         }
         
-        /* ГЛАВНАЯ КАРТИНКА - ПРЯМОУГОЛЬНАЯ (БЕЗ ЗАКРУГЛЕНИЙ) */
+        /* ГЛАВНАЯ КАРТИНКА - ПРЯМОУГОЛЬНАЯ */
         .image-zone {
             position: relative;
             width: 100%;
-            max-width: 1400px;  /* Ещё больше */
+            max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
             margin: 0 auto 30px auto;
-            border-radius: 0;  /* УБРАЛ СКРУГЛЕНИЕ */
+            border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
             cursor: crosshair;
@@ -146,29 +146,44 @@
             background: transparent;
         }
         
-        /* КОНТЕЙНЕР ПРЕДМЕТОВ */
+        /* КОНТЕЙНЕР ПРЕДМЕТОВ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
         .items-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            margin: 30px 0;
-            padding: 25px;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 20px;
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
+            margin: 30px 0;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch; /* Плавный скролл на iPhone */
+            scrollbar-width: thin;
+            scrollbar-color: #b5926a #f5e6d3;
+        }
+        
+        .items-container::-webkit-scrollbar {
+            height: 10px;
+        }
+        
+        .items-container::-webkit-scrollbar-track {
+            background: #f5e6d3;
+            border-radius: 10px;
+        }
+        
+        .items-container::-webkit-scrollbar-thumb {
+            background: #b5926a;
+            border-radius: 10px;
         }
         
         .item-image {
-            width: 280px;
-            height: 280px;
-            max-width: calc(25% - 12px);
-            min-width: 140px;
+            width: 250px;
+            height: 250px;
+            flex-shrink: 0; /* Запрещаем сжиматься */
             object-fit: cover;
             transition: 0.3s;
             filter: brightness(1);
             border-radius: 25px;
-            margin: 0;
             border: 5px solid #e9d4b0;
             background: #f5e6d3;
             padding: 8px;
@@ -203,7 +218,7 @@
             display: block;
         }
         
-        /* ТЕЛЕФОНЫ - ОПТИМИЗАЦИЯ */
+        /* ТЕЛЕФОНЫ - КАРТИНКА ВО ВЕСЬ ЭКРАН */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -215,65 +230,74 @@
             }
             
             .login-screen {
-                padding: 30px;
+                padding: 20px;
             }
             
             .login-screen h1 {
-                font-size: 32px;
-            }
-            
-            .login-input {
-                padding: 15px;
-                font-size: 18px;
-            }
-            
-            .login-btn {
-                font-size: 24px;
-                padding: 15px 30px;
-            }
-            
-            .level-btn {
-                font-size: 20px;
-                padding: 12px 25px;
-            }
-            
-            /* КАРТИНКА НА ВСЮ ШИРИНУ */
-            .image-zone {
-                border-width: 4px;
-                margin-bottom: 15px;
-                max-width: 100%;
-            }
-            
-            /* ПРЕДМЕТЫ - 2 В РЯДУ ДЛЯ ЭКОНОМИИ МЕСТА */
-            .item-image {
-                width: 200px;
-                height: 200px;
-                max-width: calc(50% - 8px); /* 2 предмета в ряду */
-                min-width: 120px;
-            }
-            
-            #message {
                 font-size: 28px;
             }
             
-            .reset-btn {
-                font-size: 22px;
-                padding: 15px 30px;
+            .login-input {
+                padding: 12px;
+                font-size: 16px;
             }
-        }
-        
-        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
-        @media (max-width: 480px) {
-            .item-image {
-                width: 160px;
-                height: 160px;
-                max-width: calc(50% - 6px);
-                min-width: 100px;
+            
+            .login-btn {
+                font-size: 20px;
+                padding: 12px 20px;
             }
             
             .level-btn {
                 font-size: 18px;
                 padding: 10px 20px;
+            }
+            
+            /* ГЛАВНАЯ КАРТИНКА - ВОТ ТЕПЕРЬ ОНА БОЛЬШАЯ! */
+            .image-zone {
+                aspect-ratio: auto; /* Убираем фиксированные пропорции */
+                height: 70vh; /* 70% от высоты экрана телефона */
+                max-height: 600px;
+                border-width: 4px;
+                margin-bottom: 15px;
+            }
+            
+            #gameImage {
+                object-fit: cover; /* Растягиваем на весь контейнер */
+            }
+            
+            /* ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+            .items-container {
+                gap: 10px;
+                padding: 15px;
+            }
+            
+            .item-image {
+                width: 150px;
+                height: 150px;
+                border-width: 3px;
+                padding: 5px;
+            }
+            
+            #message {
+                font-size: 24px;
+                margin: 15px 0;
+            }
+            
+            .reset-btn {
+                font-size: 18px;
+                padding: 12px 25px;
+            }
+        }
+        
+        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
+        @media (max-width: 480px) {
+            .image-zone {
+                height: 60vh;
+            }
+            
+            .item-image {
+                width: 120px;
+                height: 120px;
             }
         }
     </style>
@@ -297,13 +321,14 @@
                 <button class="level-btn" onclick="switchToLevel(3)">УРОВЕНЬ 3</button>
             </div>
             
-            <!-- КАРТИНКА ТЕПЕРЬ ПРЯМОУГОЛЬНАЯ -->
+            <!-- КАРТИНКА ТЕПЕРЬ БОЛЬШАЯ -->
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Найди предметы">
             </div>
             
             <div id="message"></div>
             
+            <!-- ПРЕДМЕТЫ В ОДНУ ЛИНИЮ (ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ) -->
             <div class="items-container" id="itemsContainer"></div>
             
             <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
