@@ -127,27 +127,44 @@
             min-height: 70px;
         }
         
-        .next-level-btn {
-            background: #5fa87f;
+        .level-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .level-btn {
+            background: #b5926a;
             border: none;
-            font-size: 32px;
+            font-size: 24px;
             font-weight: bold;
-            padding: 20px 60px;
-            border-radius: 70px;
+            padding: 15px 40px;
+            border-radius: 60px;
             cursor: pointer;
             color: white;
-            border: 4px solid #8fecb0;
-            margin: 20px auto;
-            display: none;
+            border: 4px solid #e9b87a;
+            transition: 0.2s;
+        }
+        
+        .level-btn:hover {
+            transform: scale(1.05);
+            background: #c4a27a;
+        }
+        
+        .level-btn.active {
+            background: #5fa87f;
+            border-color: #8fecb0;
         }
         
         .reset-btn {
             background: #b5926a;
             border: none;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            padding: 18px 60px;
-            border-radius: 70px;
+            padding: 15px 40px;
+            border-radius: 60px;
             cursor: pointer;
             color: white;
             border: 4px solid #e9b87a;
@@ -197,9 +214,9 @@
                 font-size: 30px;
             }
             
-            .reset-btn, .next-level-btn {
-                font-size: 22px;
-                padding: 15px 40px;
+            .level-btn, .reset-btn {
+                font-size: 18px;
+                padding: 12px 25px;
             }
         }
     </style>
@@ -216,19 +233,23 @@
             <button onclick="savePlayerInfo()">💾 СОХРАНИТЬ</button>
         </div>
         
+        <!-- КНОПКИ БЫСТРОГО ПЕРЕКЛЮЧЕНИЯ УРОВНЕЙ -->
+        <div class="level-buttons">
+            <button class="level-btn active" onclick="switchToLevel(1)">🎮 УРОВЕНЬ 1</button>
+            <button class="level-btn" onclick="switchToLevel(2)">🎮 УРОВЕНЬ 2</button>
+            <button class="level-btn" onclick="switchToLevel(3)">🎮 УРОВЕНЬ 3</button>
+        </div>
+        
         <div class="image-zone" id="imageZone">
             <img src="игра1/игра.jpg" id="gameImage" alt="Найди предметы">
         </div>
         
         <div id="message"></div>
         
-        <button class="next-level-btn" id="nextLevelBtn" onclick="nextLevel()">➡️ СЛЕДУЮЩИЙ УРОВЕНЬ</button>
-        
         <div class="items-container" id="itemsContainer"></div>
         
-        <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
+        <button class="reset-btn" onclick="resetGame()">🔄 СБРОСИТЬ ВСЁ</button>
         
-        <!-- Подсказка для сбора координат -->
         <div class="coords-hint" id="coordsHint">
             👆 Кликай по предметам - координаты появятся в консоли (F12)
         </div>
@@ -237,7 +258,7 @@
     <script>
         let currentLevel = 1;
         
-        // УРОВЕНЬ 1 - с путями к папке игра1
+        // УРОВЕНЬ 1
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
             { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 55, found: false },
@@ -250,23 +271,22 @@
             { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
         ];
         
-        // УРОВЕНЬ 2 - пока без координат (ты их соберешь)
+        // УРОВЕНЬ 2 - пока без координат
         const level2Items = [
-            { name: "ПРЕДМЕТ1", file: "игра2/предмет1.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ2", file: "игра2/предмет2.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ3", file: "игра2/предмет3.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ4", file: "игра2/предмет4.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ5", file: "игра2/предмет5.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ6", file: "игра2/предмет6.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ7", file: "игра2/предмет7.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ8", file: "игра2/предмет8.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ9", file: "игра2/предмет9.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "ПРЕДМЕТ 1", file: "игра2/предмет1.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 2", file: "игра2/предмет2.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 3", file: "игра2/предмет3.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 4", file: "игра2/предмет4.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 5", file: "игра2/предмет5.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 6", file: "игра2/предмет6.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 7", file: "игра2/предмет7.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 8", file: "игра2/предмет8.png", x: 0, y: 0, radius: 50, found: false },
+            { name: "ПРЕДМЕТ 9", file: "игра2/предмет9.png", x: 0, y: 0, radius: 50, found: false }
         ];
         
         // УРОВЕНЬ 3 - пока пустой
         const level3Items = [
-            { name: "ПРЕДМЕТ1", file: "игра3/предмет1.png", x: 0, y: 0, radius: 50, found: false },
-            { name: "ПРЕДМЕТ2", file: "игра3/предмет2.png", x: 0, y: 0, radius: 50, found: false }
+            { name: "ПРЕДМЕТ 1", file: "игра3/предмет1.png", x: 0, y: 0, radius: 50, found: false }
         ];
 
         let items = level1Items;
@@ -275,9 +295,9 @@
         const image = document.getElementById('gameImage');
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
-        const nextLevelBtn = document.getElementById('nextLevelBtn');
         const levelIndicator = document.getElementById('levelIndicator');
         const coordsHint = document.getElementById('coordsHint');
+        const levelBtns = document.querySelectorAll('.level-btn');
 
         function updateItemsList() {
             let html = '';
@@ -289,38 +309,43 @@
 
             if (items.every(item => item.found)) {
                 messageDiv.innerHTML = '🎉 ТЫ НАШЁЛ ВСЕ ПРЕДМЕТЫ! ПОЗДРАВЛЯЕМ! 🎉';
-                
-                if (currentLevel === 1) {
-                    nextLevelBtn.style.display = 'block';
-                    nextLevelBtn.textContent = '➡️ УРОВЕНЬ 2';
-                } else if (currentLevel === 2) {
-                    nextLevelBtn.style.display = 'block';
-                    nextLevelBtn.textContent = '➡️ УРОВЕНЬ 3';
-                } else {
-                    nextLevelBtn.style.display = 'none';
-                }
             } else {
                 messageDiv.innerHTML = '';
-                nextLevelBtn.style.display = 'none';
             }
         }
 
-        function nextLevel() {
-            if (currentLevel === 1) {
-                currentLevel = 2;
-                levelIndicator.textContent = 'УРОВЕНЬ 2';
-                image.src = 'игра2/игра2.jpg';  // ИСПРАВЛЕНО: игра2.jpg
+        function switchToLevel(level) {
+            currentLevel = level;
+            levelIndicator.textContent = `УРОВЕНЬ ${level}`;
+            
+            // Обновляем активную кнопку
+            levelBtns.forEach((btn, index) => {
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Меняем картинку и предметы в зависимости от уровня
+            if (level === 1) {
+                image.src = 'игра1/игра.jpg';
+                items = level1Items;
+                coordsHint.innerHTML = '👆 Кликай по предметам - координаты появятся в консоли (F12)';
+            } else if (level === 2) {
+                image.src = 'игра2/игра2.jpg';
                 items = level2Items;
-                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ: Кликай по предметам и записывай значения из консоли (F12)';
-            } else if (currentLevel === 2) {
-                currentLevel = 3;
-                levelIndicator.textContent = 'УРОВЕНЬ 3';
+                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 2 УРОВНЯ: Кликай по предметам и записывай значения из консоли (F12)';
+            } else if (level === 3) {
                 image.src = 'игра3/игра3.jpg';
                 items = level3Items;
+                coordsHint.innerHTML = '📢 РЕЖИМ СБОРА КООРДИНАТ ДЛЯ 3 УРОВНЯ: Кликай по предметам и записывай значения из консоли (F12)';
             }
             
+            // Сбрасываем статус found для всех предметов
+            items.forEach(item => item.found = false);
+            
             updateItemsList();
-            nextLevelBtn.style.display = 'none';
             messageDiv.innerHTML = '';
         }
 
@@ -345,7 +370,7 @@
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
-            // ВЫВОД В КОНСОЛЬ - то что тебе нужно скопировать
+            // ВЫВОД В КОНСОЛЬ
             console.log(`%c🔴 УРОВЕНЬ ${currentLevel}: X=${imgX}, Y=${imgY}`, 'background: #8b6f50; color: white; padding: 2px 5px; border-radius: 5px;');
 
             items.forEach(item => {
@@ -365,16 +390,17 @@
         });
 
         function resetGame() {
-            currentLevel = 1;
-            levelIndicator.textContent = 'УРОВЕНЬ 1';
-            image.src = 'игра1/игра.jpg';
-            items = level1Items;
-            items.forEach(item => item.found = false);
-            updateItemsList();
+            // Сбрасываем все предметы на всех уровнях
+            level1Items.forEach(item => item.found = false);
+            level2Items.forEach(item => item.found = false);
+            level3Items.forEach(item => item.found = false);
+            
+            // Возвращаемся на уровень 1
+            switchToLevel(1);
+            
+            // Очищаем поля ввода
             document.getElementById('firstName').value = '';
             document.getElementById('institute').value = '';
-            nextLevelBtn.style.display = 'none';
-            coordsHint.innerHTML = '👆 Кликай по предметам - координаты появятся в консоли (F12)';
         }
 
         image.onload = () => {
