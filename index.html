@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🔍 Антикварная лавка</title>
+    <title>Антикварная лавка</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
     <style>
         * {
@@ -29,7 +29,7 @@
             position: relative;
         }
         
-        /* ЗАСТАВКИ */
+        /* ЗАСТАВКИ УРОВНЕЙ */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -56,15 +56,9 @@
             box-shadow: 0 20px 30px rgba(0,0,0,0.3);
         }
         
-        .splash-content h1 {
-            font-size: 48px;
-            color: #4a3729;
-            margin-bottom: 30px;
-        }
-        
         .splash-content p {
             font-size: 32px;
-            color: #8b6f50;
+            color: #4a3729;
             margin-bottom: 40px;
             line-height: 1.4;
         }
@@ -113,15 +107,9 @@
             text-align: center;
         }
         
-        .login-screen h1 {
-            font-size: 56px;
-            color: #4a3729;
-            margin-bottom: 20px;
-        }
-        
         .login-screen p {
             font-size: 28px;
-            color: #8b6f50;
+            color: #4a3729;
             margin-bottom: 40px;
             line-height: 1.4;
         }
@@ -173,32 +161,6 @@
             display: block;
         }
         
-        .level-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        
-        .level-btn {
-            background: #b5926a;
-            border: none;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 20px 50px;
-            border-radius: 70px;
-            cursor: pointer;
-            color: white;
-            border: 4px solid #e9b87a;
-            transition: 0.2s;
-        }
-        
-        .level-btn.active {
-            background: #5fa87f;
-            border-color: #8fecb0;
-        }
-        
         .image-zone {
             position: relative;
             width: 100%;
@@ -221,7 +183,7 @@
             background: transparent;
         }
         
-        /* ПРЕДМЕТЫ - ОЧЕНЬ КРУПНЫЕ */
+        /* ПРЕДМЕТЫ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -263,20 +225,6 @@
             min-height: 80px;
         }
         
-        .reset-btn {
-            background: #b5926a;
-            border: none;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 20px 50px;
-            border-radius: 70px;
-            cursor: pointer;
-            color: white;
-            border: 4px solid #e9b87a;
-            margin: 20px auto 0;
-            display: block;
-        }
-        
         /* ТЕЛЕФОНЫ */
         @media (max-width: 768px) {
             body {
@@ -292,20 +240,12 @@
                 padding: 30px;
             }
             
-            .splash-content h1 {
-                font-size: 36px;
-            }
-            
             .splash-content p {
                 font-size: 24px;
             }
             
             .login-screen {
                 padding: 20px;
-            }
-            
-            .login-screen h1 {
-                font-size: 32px;
             }
             
             .login-screen p {
@@ -320,11 +260,6 @@
             .login-btn {
                 font-size: 24px;
                 padding: 15px 30px;
-            }
-            
-            .level-btn {
-                font-size: 20px;
-                padding: 12px 25px;
             }
             
             .image-zone {
@@ -355,7 +290,7 @@
                 font-size: 28px;
             }
             
-            .reset-btn, .restart-btn {
+            .restart-btn {
                 font-size: 22px;
                 padding: 15px 30px;
             }
@@ -375,32 +310,16 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- ЗАСТАВКА ПЕРЕД АНКЕТОЙ -->
-        <div id="splashPreLogin" class="splash-screen">
-            <div class="splash-content">
-                <h1>🕰️ ДОБРО ПОЖАЛОВАТЬ</h1>
-                <p>Добро пожаловать в мою антикварную лавку! Представься, пожалуйста!</p>
-                <div class="splash-hint">👇 Нажми в любое место 👇</div>
-            </div>
-        </div>
-        
-        <!-- АНКЕТА -->
-        <div id="loginScreen" class="login-screen" style="display: none;">
-            <h1>🎭 ПРЕДСТАВЬСЯ</h1>
+        <!-- АНКЕТА (С ТЕКСТОМ НАД НЕЙ) -->
+        <div id="loginScreen" class="login-screen">
             <p>Добро пожаловать в мою антикварную лавку! Представься, пожалуйста!</p>
             <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
             <input type="text" id="loginInstitute" class="login-input" placeholder="Институт" oninput="checkLoginForm()">
-            <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>🚪 ВОЙТИ</button>
+            <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>ВОЙТИ</button>
         </div>
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <div class="level-buttons">
-                <button class="level-btn active" onclick="switchToLevel(1)">1 УРОВЕНЬ</button>
-                <button class="level-btn" onclick="switchToLevel(2)">2 УРОВЕНЬ</button>
-                <button class="level-btn" onclick="switchToLevel(3)">3 УРОВЕНЬ</button>
-            </div>
-            
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
             </div>
@@ -412,60 +331,6 @@
     </div>
 
     <script>
-        // ============================================
-        // ЗАСТАВКИ
-        // ============================================
-        
-        // Заставка перед анкетой
-        document.getElementById('splashPreLogin').addEventListener('click', function() {
-            this.style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'block';
-        });
-        
-        // Функция показа заставки уровня
-        function showLevelSplash(level, text) {
-            const splash = document.createElement('div');
-            splash.className = 'splash-screen';
-            splash.innerHTML = `
-                <div class="splash-content">
-                    <h1>🔍 УРОВЕНЬ ${level}</h1>
-                    <p>${text}</p>
-                    <div class="splash-hint">👇 Нажми в любое место 👇</div>
-                </div>
-            `;
-            
-            document.body.appendChild(splash);
-            
-            splash.addEventListener('click', function() {
-                this.remove();
-            });
-        }
-        
-        // Функция показа финального экрана
-        function showFinalSplash() {
-            const splash = document.createElement('div');
-            splash.className = 'splash-screen';
-            splash.innerHTML = `
-                <div class="splash-content">
-                    <h1>🎉 ПОБЕДА!</h1>
-                    <p>Ну ты настоящий сыщик! Очень помог мне. В долгу не останусь!</p>
-                    <button class="restart-btn" onclick="restartToLogin()">🔄 К НАЧАЛУ</button>
-                </div>
-            `;
-            
-            document.body.appendChild(splash);
-        }
-        
-        // Возврат к анкете
-        function restartToLogin() {
-            document.querySelectorAll('.splash-screen').forEach(el => el.remove());
-            document.getElementById('gameScreen').classList.remove('active');
-            document.getElementById('loginScreen').style.display = 'block';
-            document.getElementById('loginName').value = '';
-            document.getElementById('loginInstitute').value = '';
-            document.getElementById('loginBtn').disabled = true;
-        }
-        
         // ============================================
         // АНКЕТА
         // ============================================
@@ -490,11 +355,55 @@
             document.getElementById('gameScreen').classList.add('active');
             
             // Показываем заставку перед 1 уровнем
-            showLevelSplash(1, 'Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?');
+            showLevelSplash('Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?');
         }
         
         // ============================================
-        // ПРЕДМЕТЫ (ТЕПЕРЬ ПО 5 НА КАЖДЫЙ УРОВЕНЬ)
+        // ЗАСТАВКИ УРОВНЕЙ
+        // ============================================
+        function showLevelSplash(text) {
+            const splash = document.createElement('div');
+            splash.className = 'splash-screen';
+            splash.innerHTML = `
+                <div class="splash-content">
+                    <p>${text}</p>
+                    <div class="splash-hint">👇 Нажми в любое место 👇</div>
+                </div>
+            `;
+            
+            document.body.appendChild(splash);
+            
+            splash.addEventListener('click', function() {
+                this.remove();
+            });
+        }
+        
+        // Финальный экран
+        function showFinalSplash() {
+            const splash = document.createElement('div');
+            splash.className = 'splash-screen';
+            splash.innerHTML = `
+                <div class="splash-content">
+                    <p>Ну ты настоящий сыщик! Очень помог мне. В долгу не останусь!</p>
+                    <button class="restart-btn" onclick="restartToLogin()">К НАЧАЛУ</button>
+                </div>
+            `;
+            
+            document.body.appendChild(splash);
+        }
+        
+        // Возврат к анкете
+        function restartToLogin() {
+            document.querySelectorAll('.splash-screen').forEach(el => el.remove());
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('loginName').value = '';
+            document.getElementById('loginInstitute').value = '';
+            document.getElementById('loginBtn').disabled = true;
+        }
+        
+        // ============================================
+        // ПРЕДМЕТЫ (ПО 5 НА УРОВЕНЬ)
         // ============================================
         let currentLevel = 1;
         
@@ -539,13 +448,15 @@
 
             if (items.every(item => item.found)) {
                 if (currentLevel === 1) {
-                    messageDiv.innerHTML = '🎉 УРОВЕНЬ 1 ПРОЙДЕН!';
-                    showLevelSplash(2, 'Ох! Спасибо! Выручил! Сможешь найти ещё несколько предметов?');
+                    messageDiv.innerHTML = '';
+                    showLevelSplash('Ох! Спасибо! Выручил! Сможешь найти ещё несколько предметов?');
+                    switchToLevel(2);
                 } else if (currentLevel === 2) {
-                    messageDiv.innerHTML = '🎉 УРОВЕНЬ 2 ПРОЙДЕН!';
-                    showLevelSplash(3, 'У тебя отлично получается! Как на счёт того, чтобы в последний раз выручить меня? Постарайся найти эти предметы');
+                    messageDiv.innerHTML = '';
+                    showLevelSplash('У тебя отлично получается! Как на счёт того, чтобы в последний раз выручить меня? Постарайся найти эти предметы');
+                    switchToLevel(3);
                 } else if (currentLevel === 3) {
-                    messageDiv.innerHTML = '🎉 ВСЕ УРОВНИ ПРОЙДЕНЫ!';
+                    messageDiv.innerHTML = '';
                     showFinalSplash();
                 }
             } else {
@@ -555,10 +466,6 @@
 
         function switchToLevel(level) {
             currentLevel = level;
-            
-            document.querySelectorAll('.level-btn').forEach((btn, index) => {
-                btn.classList.toggle('active', index + 1 === level);
-            });
             
             const levelMap = {
                 1: { src: 'игра1/игра.jpg', items: level1Items },
