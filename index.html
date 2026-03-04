@@ -107,11 +107,15 @@
             text-align: center;
         }
         
+        /* НАЧАЛЬНЫЙ ТЕКСТ - ИСПРАВЛЕННЫЙ */
         .login-screen p {
-            font-size: 28px;
+            font-size: 36px;
+            font-weight: 900;
             color: #4a3729;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             line-height: 1.4;
+            text-shadow: 2px 2px 0 #e9d4b0;
+            letter-spacing: 1px;
         }
         
         .login-input {
@@ -171,7 +175,7 @@
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
-            cursor: crosshair;
+            cursor: none;
             background: #f5e6d3;
         }
         
@@ -181,6 +185,24 @@
             object-fit: contain;
             display: block;
             background: transparent;
+            pointer-events: none;
+        }
+        
+        /* ЛУПА */
+        .magnifier {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid gold;
+            box-shadow: 0 0 20px gold, inset 0 0 10px white;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(2px);
         }
         
         /* ПРЕДМЕТЫ */
@@ -249,7 +271,8 @@
             }
             
             .login-screen p {
-                font-size: 20px;
+                font-size: 28px;
+                margin-bottom: 30px;
             }
             
             .login-input {
@@ -274,14 +297,21 @@
                 object-fit: cover;
             }
             
+            .magnifier {
+                width: 150px;
+                height: 150px;
+                border-width: 3px;
+            }
+            
+            /* ПРЕДМЕТЫ ЕЩЁ БОЛЬШЕ НА ТЕЛЕФОНЕ */
             .items-container {
                 gap: 20px;
                 padding: 15px;
             }
             
             .item-image {
-                width: 250px;
-                height: 250px;
+                width: 300px;
+                height: 300px;
                 border-width: 5px;
                 padding: 8px;
             }
@@ -301,18 +331,23 @@
                 height: 60vh;
             }
             
+            .magnifier {
+                width: 130px;
+                height: 130px;
+            }
+            
             .item-image {
-                width: 220px;
-                height: 220px;
+                width: 280px;
+                height: 280px;
             }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <!-- АНКЕТА (С ТЕКСТОМ НАД НЕЙ) -->
+        <!-- АНКЕТА (С ИСПРАВЛЕННЫМ ТЕКСТОМ) -->
         <div id="loginScreen" class="login-screen">
-            <p>Добро пожаловать в мою антикварную лавку! Представься, пожалуйста!</p>
+            <p>Добро пожаловать в нашу антикварную лавку! Представься, пожалуйста!</p>
             <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
             <input type="text" id="loginInstitute" class="login-input" placeholder="Институт" oninput="checkLoginForm()">
             <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>ВОЙТИ</button>
@@ -322,6 +357,7 @@
         <div id="gameScreen" class="game-screen">
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
+                <div class="magnifier" id="magnifier"></div>
             </div>
             
             <div id="message"></div>
@@ -331,6 +367,59 @@
     </div>
 
     <script>
+        // ============================================
+        // ЛУПА
+        // ============================================
+        const imageZone = document.getElementById('imageZone');
+        const magnifier = document.getElementById('magnifier');
+        const gameImage = document.getElementById('gameImage');
+        
+        imageZone.addEventListener('mousemove', (e) => {
+            const rect = imageZone.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            magnifier.style.display = 'block';
+            magnifier.style.left = x + 'px';
+            magnifier.style.top = y + 'px';
+            
+            // Увеличиваем фрагмент картинки (опционально)
+            const bgX = (x / rect.width) * 100;
+            const bgY = (y / rect.height) * 100;
+            magnifier.style.backgroundImage = `url('${gameImage.src}')`;
+            magnifier.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`;
+            magnifier.style.backgroundPosition = `${bgX * 2 - 50}% ${bgY * 2 - 50}%`;
+        });
+        
+        imageZone.addEventListener('mouseleave', () => {
+            magnifier.style.display = 'none';
+        });
+        
+        // Для телефонов (touch-события)
+        imageZone.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = imageZone.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            
+            if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                magnifier.style.display = 'block';
+                magnifier.style.left = x + 'px';
+                magnifier.style.top = y + 'px';
+                
+                const bgX = (x / rect.width) * 100;
+                const bgY = (y / rect.height) * 100;
+                magnifier.style.backgroundImage = `url('${gameImage.src}')`;
+                magnifier.style.backgroundSize = `${rect.width * 2}px ${rect.height * 2}px`;
+                magnifier.style.backgroundPosition = `${bgX * 2 - 50}% ${bgY * 2 - 50}%`;
+            }
+        });
+        
+        imageZone.addEventListener('touchend', () => {
+            magnifier.style.display = 'none';
+        });
+        
         // ============================================
         // АНКЕТА
         // ============================================
@@ -433,7 +522,7 @@
 
         let items = level1Items;
 
-        const imageZone = document.getElementById('imageZone');
+        const imageZoneGame = document.getElementById('imageZone');
         const image = document.getElementById('gameImage');
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
@@ -481,8 +570,8 @@
             messageDiv.innerHTML = '';
         }
 
-        imageZone.addEventListener('click', (e) => {
-            const rect = imageZone.getBoundingClientRect();
+        imageZoneGame.addEventListener('click', (e) => {
+            const rect = imageZoneGame.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
 
