@@ -203,56 +203,55 @@
             pointer-events: none;
         }
         
-        /* ЛУПА С ПАЛОЧКОЙ */
-        .magnifier-stick {
+        /* ЛУПА С ДЛИННОЙ ДИАГОНАЛЬНОЙ ПАЛОЧКОЙ */
+        .magnifier-container {
             position: absolute;
-            width: 220px;
-            height: 220px;
             pointer-events: none;
             z-index: 100;
             display: none;
-            transform: translate(-50%, -70%); /* Смещаем вверх, чтобы палец не закрывал */
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            transform-origin: bottom right;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
+        }
+        
+        .magnifier-stick {
+            position: absolute;
+            bottom: -40px;
+            right: -30px;
+            width: 100px;
+            height: 20px;
+            background: linear-gradient(135deg, #b5926a, #6b4f3a);
+            border-radius: 20px;
+            border: 3px solid #e9b87a;
+            transform: rotate(-45deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+        
+        .magnifier-stick::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 30px;
+            height: 15px;
+            background: linear-gradient(135deg, #d4b595, #b5926a);
+            border-radius: 10px;
+            border: 2px solid #e9b87a;
+            transform: translateX(-50%);
         }
         
         .magnifier-glass {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            border: 5px solid gold;
-            box-shadow: 0 0 20px gold, inset 0 0 15px rgba(255,255,255,0.8);
+            border: 6px solid gold;
+            box-shadow: 0 0 30px gold, inset 0 0 20px rgba(255,255,255,0.8);
             overflow: hidden;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(1px);
-        }
-        
-        .magnifier-handle {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 60px;
-            background: linear-gradient(135deg, #b5926a, #8b6f50);
-            border-radius: 15px;
-            border: 3px solid #e9b87a;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-        }
-        
-        .magnifier-handle::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 25px;
-            background: linear-gradient(135deg, #d4b595, #b5926a);
-            border-radius: 10px;
-            border: 2px solid #e9b87a;
+            transform: translate(-100%, -100%);
         }
         
         /* ПРЕДМЕТЫ */
@@ -354,15 +353,15 @@
                 right: 10px;
             }
             
-            .magnifier-stick {
+            .magnifier-glass {
                 width: 160px;
                 height: 160px;
             }
             
-            .magnifier-handle {
-                bottom: -20px;
-                height: 45px;
-                width: 25px;
+            .magnifier-stick {
+                width: 80px;
+                bottom: -30px;
+                right: -25px;
             }
             
             .items-container {
@@ -392,19 +391,20 @@
                 height: 60vh;
             }
             
-            .magnifier-stick {
+            .magnifier-glass {
                 width: 140px;
                 height: 140px;
+            }
+            
+            .magnifier-stick {
+                width: 70px;
+                bottom: -25px;
+                right: -20px;
             }
             
             .item-image {
                 width: 280px;
                 height: 280px;
-            }
-            
-            .hint-text {
-                font-size: 12px;
-                padding: 6px 12px;
             }
         }
     </style>
@@ -423,12 +423,12 @@
         <div id="gameScreen" class="game-screen">
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
-                <!-- ПОДСКАЗКА (появится только на 1 уровне) -->
+                <!-- ПОДСКАЗКА -->
                 <div class="hint-text" id="hintText">зажми экран на картинке, чтобы разглядеть получше 🔍</div>
-                <!-- ЛУПА С ПАЛОЧКОЙ -->
-                <div class="magnifier-stick" id="magnifier">
+                <!-- ЛУПА С ДЛИННОЙ ПАЛОЧКОЙ -->
+                <div class="magnifier-container" id="magnifierContainer">
                     <div class="magnifier-glass" id="magnifierGlass"></div>
-                    <div class="magnifier-handle"></div>
+                    <div class="magnifier-stick"></div>
                 </div>
             </div>
             
@@ -440,44 +440,62 @@
 
     <script>
         // ============================================
-        // ЛУПА С ПАЛОЧКОЙ
+        // ЛУПА С ПАЛОЧКОЙ (ИСПРАВЛЕННАЯ)
         // ============================================
         const imageZone = document.getElementById('imageZone');
-        const magnifier = document.getElementById('magnifier');
+        const magnifierContainer = document.getElementById('magnifierContainer');
         const magnifierGlass = document.getElementById('magnifierGlass');
         const gameImage = document.getElementById('gameImage');
         const hintText = document.getElementById('hintText');
         
-        // Показываем подсказку только на 1 уровне
         let currentLevel = 1;
         
         function updateHintVisibility() {
             hintText.style.display = currentLevel === 1 ? 'block' : 'none';
         }
         
+        // Функция обновления позиции лупы
+        function updateMagnifier(x, y, rect) {
+            magnifierContainer.style.display = 'block';
+            
+            // Лупа располагается над курсором, чтобы не перекрывать обзор
+            const magnifierOffset = 30;
+            magnifierContainer.style.left = (x - magnifierOffset) + 'px';
+            magnifierContainer.style.top = (y - magnifierOffset) + 'px';
+            
+            // ТОЧНОЕ приближение - показываем именно то место, где курсор
+            const zoomLevel = 1.5; // Умеренное увеличение
+            
+            // Вычисляем процентное положение курсора на картинке
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+            
+            // Устанавливаем фон для лупы
+            magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
+            magnifierGlass.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
+            
+            // Корректируем позицию фона, чтобы центр лупы совпадал с курсором
+            const bgX = percentX * zoomLevel - 50;
+            const bgY = percentY * zoomLevel - 50;
+            magnifierGlass.style.backgroundPosition = `${bgX}% ${bgY}%`;
+        }
+        
+        // Для мыши (ПК)
         imageZone.addEventListener('mousemove', (e) => {
             const rect = imageZone.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             
-            magnifier.style.display = 'block';
-            magnifier.style.left = x + 'px';
-            magnifier.style.top = y + 'px';
-            
-            // Умеренное приближение (1.2x для ПК)
-            const zoomLevel = 1.2;
-            const bgX = (x / rect.width) * 100;
-            const bgY = (y / rect.height) * 100;
-            magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
-            magnifierGlass.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
-            magnifierGlass.style.backgroundPosition = `${bgX * zoomLevel - 50}% ${bgY * zoomLevel - 50}%`;
+            if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                updateMagnifier(x, y, rect);
+            }
         });
         
         imageZone.addEventListener('mouseleave', () => {
-            magnifier.style.display = 'none';
+            magnifierContainer.style.display = 'none';
         });
         
-        // Для телефонов
+        // Для телефонов (touch)
         imageZone.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
@@ -486,22 +504,12 @@
             const y = touch.clientY - rect.top;
             
             if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
-                magnifier.style.display = 'block';
-                magnifier.style.left = x + 'px';
-                magnifier.style.top = y + 'px';
-                
-                // Немного больше приближение для телефона
-                const zoomLevel = 1.3;
-                const bgX = (x / rect.width) * 100;
-                const bgY = (y / rect.height) * 100;
-                magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
-                magnifierGlass.style.backgroundSize = `${rect.width * zoomLevel}px ${rect.height * zoomLevel}px`;
-                magnifierGlass.style.backgroundPosition = `${bgX * zoomLevel - 50}% ${bgY * zoomLevel - 50}%`;
+                updateMagnifier(x, y, rect);
             }
         });
         
         imageZone.addEventListener('touchend', () => {
-            magnifier.style.display = 'none';
+            magnifierContainer.style.display = 'none';
         });
         
         // ============================================
@@ -527,7 +535,6 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').classList.add('active');
             
-            // Показываем заставку перед 1 уровнем
             showLevelSplash('Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?');
         }
         
@@ -551,7 +558,6 @@
             });
         }
         
-        // Финальный экран
         function showFinalSplash() {
             const splash = document.createElement('div');
             splash.className = 'splash-screen';
@@ -565,7 +571,6 @@
             document.body.appendChild(splash);
         }
         
-        // Возврат к анкете
         function restartToLogin() {
             document.querySelectorAll('.splash-screen').forEach(el => el.remove());
             document.getElementById('gameScreen').classList.remove('active');
@@ -576,7 +581,7 @@
         }
         
         // ============================================
-        // ПРЕДМЕТЫ (ПО 5 НА УРОВЕНЬ)
+        // ПРЕДМЕТЫ
         // ============================================
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
@@ -634,7 +639,6 @@
                 messageDiv.innerHTML = '';
             }
             
-            // Обновляем видимость подсказки
             updateHintVisibility();
         }
 
