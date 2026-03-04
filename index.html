@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🔍 Антикварная лавка</title>
+    <title>🔍 Найди предметы</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
     <style>
         * {
@@ -26,51 +26,88 @@
             box-shadow: 0 30px 40px rgba(0,0,0,0.3);
             max-width: 1800px;
             width: 100%;
+            position: relative;
         }
         
-        /* ТЕКСТОВОЕ ОКОШКО */
-        .text-box {
-            background: #f5e6d3;
-            border-radius: 40px;
-            padding: 25px 35px;
-            margin-bottom: 30px;
-            border: 4px solid #a6896b;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        /* ЗАСТАВКИ (ПОЛНОЭКРАННЫЕ) */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(230, 213, 184, 0.95);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            transition: opacity 0.5s;
         }
         
-        .text-box p {
-            font-size: 28px;
-            color: #4a3729;
-            line-height: 1.4;
+        .splash-content {
             text-align: center;
-            font-weight: 500;
+            max-width: 800px;
+            padding: 40px;
         }
         
-        /* ЭКРАН ВХОДА */
+        .splash-content h1 {
+            font-size: 72px;
+            color: #4a3729;
+            margin-bottom: 30px;
+            text-shadow: 5px 5px 0 #e9d4b0;
+        }
+        
+        .splash-content p {
+            font-size: 36px;
+            color: #8b6f50;
+            margin-bottom: 40px;
+        }
+        
+        .splash-hint {
+            font-size: 28px;
+            color: #b5926a;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        
+        /* АНКЕТА */
         .login-screen {
             background: #f5e6d3;
             border-radius: 40px;
-            padding: 50px;
+            padding: 60px;
             border: 4px solid #a6896b;
             max-width: 700px;
-            margin: 30px auto;
+            margin: 50px auto;
             text-align: center;
         }
         
         .login-screen h1 {
-            font-size: 48px;
+            font-size: 56px;
             color: #4a3729;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .login-screen p {
+            font-size: 26px;
+            color: #8b6f50;
+            margin-bottom: 40px;
         }
         
         .login-input {
             width: 100%;
-            padding: 20px;
-            font-size: 24px;
-            border-radius: 60px;
+            padding: 25px;
+            font-size: 26px;
+            border-radius: 70px;
             border: 4px solid #8b6f50;
             background: white;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
         }
         
@@ -78,10 +115,10 @@
             background: #5fa87f;
             color: white;
             border: none;
-            font-size: 32px;
+            font-size: 36px;
             font-weight: bold;
-            padding: 20px 40px;
-            border-radius: 70px;
+            padding: 25px 50px;
+            border-radius: 80px;
             cursor: pointer;
             border: 4px solid #8fecb0;
             width: 100%;
@@ -101,12 +138,39 @@
             transform: none;
         }
         
+        /* ИГРОВОЙ ЭКРАН */
         .game-screen {
             display: none;
         }
         
         .game-screen.active {
             display: block;
+        }
+        
+        .level-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .level-btn {
+            background: #b5926a;
+            border: none;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 20px 50px;
+            border-radius: 70px;
+            cursor: pointer;
+            color: white;
+            border: 4px solid #e9b87a;
+            transition: 0.2s;
+        }
+        
+        .level-btn.active {
+            background: #5fa87f;
+            border-color: #8fecb0;
         }
         
         /* ГЛАВНАЯ КАРТИНКА */
@@ -132,7 +196,7 @@
             background: transparent;
         }
         
-        /* КОНТЕЙНЕР ПРЕДМЕТОВ - 5 ШТУК ПО 250х250 */
+        /* ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -144,33 +208,17 @@
             margin: 30px 0;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: #b5926a #f5e6d3;
-        }
-        
-        .items-container::-webkit-scrollbar {
-            height: 12px;
-        }
-        
-        .items-container::-webkit-scrollbar-track {
-            background: #f5e6d3;
-            border-radius: 10px;
-        }
-        
-        .items-container::-webkit-scrollbar-thumb {
-            background: #b5926a;
-            border-radius: 10px;
         }
         
         .item-image {
-            width: 250px;
-            height: 250px;
+            width: 300px;
+            height: 300px;
             flex-shrink: 0;
             object-fit: cover;
             transition: 0.3s;
             filter: brightness(1);
-            border-radius: 25px;
-            border: 5px solid #e9d4b0;
+            border-radius: 30px;
+            border: 6px solid #e9d4b0;
             background: #f5e6d3;
             padding: 10px;
         }
@@ -183,20 +231,20 @@
         
         #message {
             text-align: center;
-            font-size: 32px;
+            font-size: 44px;
             font-weight: bold;
             color: #4a3729;
-            margin: 20px 0;
-            min-height: 60px;
+            margin: 25px 0;
+            min-height: 80px;
         }
         
         .reset-btn {
             background: #b5926a;
             border: none;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            padding: 15px 40px;
-            border-radius: 60px;
+            padding: 20px 50px;
+            border-radius: 70px;
             cursor: pointer;
             color: white;
             border: 4px solid #e9b87a;
@@ -204,28 +252,27 @@
             display: block;
         }
         
-        /* ТЕЛЕФОНЫ */
+        /* ТЕЛЕФОНЫ - МАКСИМАЛЬНО КРУПНО */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 5px;
             }
             
             .game-container {
-                padding: 15px;
+                padding: 10px;
                 border-radius: 30px;
             }
             
-            .text-box {
-                padding: 15px 20px;
-                margin-bottom: 20px;
+            .splash-content h1 {
+                font-size: 48px;
             }
             
-            .text-box p {
-                font-size: 20px;
+            .splash-content p {
+                font-size: 28px;
             }
             
             .login-screen {
-                padding: 25px;
+                padding: 20px;
             }
             
             .login-screen h1 {
@@ -233,46 +280,83 @@
             }
             
             .login-input {
-                padding: 15px;
-                font-size: 18px;
+                padding: 12px;
+                font-size: 16px;
             }
             
             .login-btn {
-                font-size: 24px;
-                padding: 15px 25px;
+                font-size: 20px;
+                padding: 12px 20px;
             }
             
+            .level-btn {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+            
+            /* ГЛАВНАЯ КАРТИНКА - ВО ВЕСЬ ЭКРАН */
             .image-zone {
                 aspect-ratio: auto;
-                height: 50vh;
+                height: 70vh;
+                max-height: 600px;
                 border-width: 4px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
+            }
+            
+            #gameImage {
+                object-fit: cover;
+            }
+            
+            /* ПРЕДМЕТЫ - ОЧЕНЬ КРУПНЫЕ */
+            .items-container {
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .item-image {
+                width: 200px;
+                height: 200px;
+                border-width: 4px;
+                padding: 6px;
+            }
+            
+            #message {
+                font-size: 28px;
+            }
+            
+            .reset-btn {
+                font-size: 20px;
+                padding: 12px 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .image-zone {
+                height: 60vh;
             }
             
             .item-image {
                 width: 180px;
                 height: 180px;
             }
-            
-            #message {
-                font-size: 24px;
-            }
-            
-            .reset-btn {
-                font-size: 20px;
-                padding: 12px 30px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <!-- ЭКРАН ВХОДА -->
-        <div id="loginScreen" class="login-screen">
-            <h1>🏺 АНТИКВАРНАЯ ЛАВКА</h1>
-            <div class="text-box">
-                <p>Добро пожаловать в мою антикварную лавку! Представься, пожалуйста!</p>
+        <!-- ЗАСТАВКА ПЕРЕД АНКЕТОЙ -->
+        <div id="splashPreLogin" class="splash-screen">
+            <div class="splash-content">
+                <h1>🎮 ДОБРО ПОЖАЛОВАТЬ!</h1>
+                <p>В ЭПОХУ ПОИСКА ПРЕДМЕТОВ</p>
+                <div class="splash-hint">👇 Нажми в любое место, чтобы начать 👇</div>
             </div>
+        </div>
+        
+        <!-- АНКЕТА -->
+        <div id="loginScreen" class="login-screen" style="display: none;">
+            <h1>🎮 ПРЕДСТАВЬСЯ</h1>
+            <p>Заполните данные для входа</p>
             <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
             <input type="text" id="loginInstitute" class="login-input" placeholder="Институт" oninput="checkLoginForm()">
             <button id="loginBtn" class="login-btn" onclick="startGame()" disabled>🚪 ВОЙТИ</button>
@@ -280,93 +364,49 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <!-- ТЕКСТОВОЕ ОКНО (меняется динамически) -->
-            <div class="text-box" id="storyText">
-                <p>Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?</p>
+            <div class="level-buttons">
+                <button class="level-btn active" onclick="switchToLevel(1)">УРОВЕНЬ 1</button>
+                <button class="level-btn" onclick="switchToLevel(2)">УРОВЕНЬ 2</button>
+                <button class="level-btn" onclick="switchToLevel(3)">УРОВЕНЬ 3</button>
             </div>
             
-            <!-- КАРТИНКА -->
             <div class="image-zone" id="imageZone">
-                <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
+                <img src="игра1/игра.jpg" id="gameImage" alt="Найди предметы">
             </div>
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ (5 штук) -->
             <div class="items-container" id="itemsContainer"></div>
             
-            <button class="reset-btn" onclick="resetGame()">🔄 НАЧАТЬ ЗАНОВО</button>
+            <button class="reset-btn" onclick="resetGame()">🔄 НОВАЯ ИГРА</button>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ДАННЫЕ ИГРОКА И ТЕКСТЫ
+        // ЗАСТАВКИ
+        // ============================================
+        let currentSplash = null;
+        
+        // Заставка перед анкетой
+        document.getElementById('splashPreLogin').addEventListener('click', function() {
+            this.style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+        });
+        
+        // ============================================
+        // АНКЕТА
         // ============================================
         let currentPlayer = {
             name: '',
             institute: ''
         };
         
-        let currentLevel = 1;
-        
-        const storyTexts = [
-            "Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?",
-            "Ох! Спасибо! Выручил! Сможешь найти ещё несколько предметов?",
-            "У тебя отлично получается! Как на счёт того, чтобы в последний раз выручить меня? Постарайся найти эти предметы",
-            "Ну ты настоящий сыщик! Очень помог мне. В долгу не останусь!"
-        ];
-        
-        // ============================================
-        // УРОВНИ - ПО 5 СЛУЧАЙНЫХ ПРЕДМЕТОВ
-        // ============================================
-        
-        // Уровень 1 (выбраны 5 случайных из 9)
-        const level1Items = [
-            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
-            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 55, found: false },
-            { name: "ЯЩИК", file: "игра1/ящик.png", x: 530, y: 549, radius: 60, found: false },
-            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 55, found: false },
-            { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
-        ];
-        
-        // Уровень 2 (выбраны 5 случайных из 9)
-        const level2Items = [
-            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
-            { name: "МАСКА", file: "игра2/маска.png", x: 264, y: 489, radius: 50, found: false },
-            { name: "СКАЛКИ", file: "игра2/скалки.png", x: 439, y: 850, radius: 50, found: false },
-            { name: "ЧУЧЕЛО2", file: "игра2/чучело2.png", x: 465, y: 508, radius: 50, found: false },
-            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
-        ];
-        
-        // Уровень 3 (выбраны 5 случайных из 9)
-        const level3Items = [
-            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
-            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 55, found: false },
-            { name: "ЧАСЫ2", file: "игра3/часы2.png", x: 383, y: 753, radius: 50, found: false },
-            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 50, found: false },
-            { name: "УДОЧКА", file: "игра3/удочка.png", x: 421, y: 913, radius: 55, found: false }
-        ];
-
-        let items = level1Items;
-
-        // ============================================
-        // DOM ЭЛЕМЕНТЫ
-        // ============================================
-        const imageZone = document.getElementById('imageZone');
-        const image = document.getElementById('gameImage');
-        const itemsContainer = document.getElementById('itemsContainer');
-        const messageDiv = document.getElementById('message');
-        const storyDiv = document.getElementById('storyText').querySelector('p');
-        
-        // ============================================
-        // ФУНКЦИИ
-        // ============================================
-        
         function checkLoginForm() {
             const name = document.getElementById('loginName').value.trim();
             const institute = document.getElementById('loginInstitute').value.trim();
             const loginBtn = document.getElementById('loginBtn');
+            
             loginBtn.disabled = !(name && institute);
         }
         
@@ -375,11 +415,83 @@
             currentPlayer.institute = document.getElementById('loginInstitute').value.trim();
             
             document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('gameScreen').classList.add('active');
             
-            console.log('✅ Новый игрок:', currentPlayer);
+            // Показываем заставку перед 1 уровнем
+            showLevelSplash(1);
         }
         
+        // ============================================
+        // ЗАСТАВКИ УРОВНЕЙ
+        // ============================================
+        function showLevelSplash(level) {
+            const splash = document.createElement('div');
+            splash.className = 'splash-screen';
+            splash.innerHTML = `
+                <div class="splash-content">
+                    <h1>🎮 УРОВЕНЬ ${level}</h1>
+                    <p>НАЙДИ ВСЕ ПРЕДМЕТЫ</p>
+                    <div class="splash-hint">👇 Нажни в любое место, чтобы начать 👇</div>
+                </div>
+            `;
+            
+            document.body.appendChild(splash);
+            
+            splash.addEventListener('click', function() {
+                this.remove();
+                if (level === 1) {
+                    document.getElementById('gameScreen').classList.add('active');
+                }
+            });
+        }
+        
+        // ============================================
+        // ЛОГИКА ИГРЫ
+        // ============================================
+        let currentLevel = 1;
+        
+        const level1Items = [
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
+            { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 55, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 55, found: false },
+            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 60, found: false },
+            { name: "ЯЩИК", file: "игра1/ящик.png", x: 530, y: 549, radius: 60, found: false },
+            { name: "КОРЗИНА", file: "игра1/корзина.png", x: 398, y: 451, radius: 55, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 55, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 55, found: false },
+            { name: "РАМКА", file: "игра1/рамка.png", x: 442, y: 335, radius: 55, found: false }
+        ];
+        
+        const level2Items = [
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 50, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
+            { name: "СЕРДЕЧКО", file: "игра2/сердечко.png", x: 393, y: 453, radius: 50, found: false },
+            { name: "МАСКА", file: "игра2/маска.png", x: 264, y: 489, radius: 50, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 55, found: false },
+            { name: "СКАЛКИ", file: "игра2/скалки.png", x: 439, y: 850, radius: 50, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 55, found: false },
+            { name: "ЧУЧЕЛО2", file: "игра2/чучело2.png", x: 465, y: 508, radius: 50, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
+        ];
+        
+        const level3Items = [
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
+            { name: "ЗЕЛЕНЫЙГРАФИН", file: "игра3/зеленыйграфин.png", x: 494, y: 137, radius: 50, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 55, found: false },
+            { name: "ЧАСЫ2", file: "игра3/часы2.png", x: 383, y: 753, radius: 50, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 50, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 50, found: false },
+            { name: "УДОЧКА", file: "игра3/удочка.png", x: 421, y: 913, radius: 55, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 50, found: false },
+            { name: "ВАЗА", file: "игра3/ваза.png", x: 250, y: 324, radius: 50, found: false }
+        ];
+
+        let items = level1Items;
+
+        const imageZone = document.getElementById('imageZone');
+        const image = document.getElementById('gameImage');
+        const itemsContainer = document.getElementById('itemsContainer');
+        const messageDiv = document.getElementById('message');
+
         function updateItemsList() {
             let html = '';
             items.forEach(item => {
@@ -389,33 +501,34 @@
             itemsContainer.innerHTML = html;
 
             if (items.every(item => item.found)) {
-                if (currentLevel === 1) {
-                    messageDiv.innerHTML = '🎉 УРОВЕНЬ 1 ПРОЙДЕН! 🎉';
-                    setTimeout(() => nextLevel(), 1500);
-                } else if (currentLevel === 2) {
-                    messageDiv.innerHTML = '🎉 УРОВЕНЬ 2 ПРОЙДЕН! 🎉';
-                    setTimeout(() => nextLevel(), 1500);
-                } else if (currentLevel === 3) {
-                    messageDiv.innerHTML = '🎉 ИГРА ПРОЙДЕНА! СПАСИБО! 🎉';
-                    storyDiv.textContent = storyTexts[3];
+                messageDiv.innerHTML = '🎉 ВСЁ НАШЁЛ! 🎉';
+                
+                // После завершения уровня показываем заставку следующего
+                if (currentLevel < 3) {
+                    setTimeout(() => {
+                        showLevelSplash(currentLevel + 1);
+                    }, 1000);
                 }
             } else {
                 messageDiv.innerHTML = '';
             }
         }
-        
-        function nextLevel() {
-            if (currentLevel === 1) {
-                currentLevel = 2;
-                image.src = 'игра2/игра2.jpg';
-                items = level2Items;
-                storyDiv.textContent = storyTexts[1];
-            } else if (currentLevel === 2) {
-                currentLevel = 3;
-                image.src = 'игра3/игра3.jpg';
-                items = level3Items;
-                storyDiv.textContent = storyTexts[2];
-            }
+
+        function switchToLevel(level) {
+            currentLevel = level;
+            
+            document.querySelectorAll('.level-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index + 1 === level);
+            });
+            
+            const levelMap = {
+                1: { src: 'игра1/игра.jpg', items: level1Items },
+                2: { src: 'игра2/игра2.jpg', items: level2Items },
+                3: { src: 'игра3/игра3.jpg', items: level3Items }
+            };
+            
+            image.src = levelMap[level].src;
+            items = levelMap[level].items;
             
             items.forEach(item => item.found = false);
             updateItemsList();
@@ -446,20 +559,10 @@
         });
 
         function resetGame() {
-            currentLevel = 1;
-            image.src = 'игра1/игра.jpg';
-            items = level1Items;
-            items.forEach(item => item.found = false);
-            storyDiv.textContent = storyTexts[0];
-            updateItemsList();
-            messageDiv.innerHTML = '';
-            
-            // Возврат на экран входа
-            document.getElementById('loginScreen').style.display = 'block';
-            document.getElementById('gameScreen').classList.remove('active');
-            document.getElementById('loginName').value = '';
-            document.getElementById('loginInstitute').value = '';
-            document.getElementById('loginBtn').disabled = true;
+            level1Items.forEach(item => item.found = false);
+            level2Items.forEach(item => item.found = false);
+            level3Items.forEach(item => item.found = false);
+            switchToLevel(1);
         }
 
         image.onload = updateItemsList;
