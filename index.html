@@ -154,11 +154,11 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА НАД КАРТИНКОЙ (перенесена сверху) */
+        /* ПОДСКАЗКА НАД КАРТИНКОЙ */
         .hint-container {
             text-align: center;
-            margin-bottom: 15px;
-            padding: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
             background: #d4b595;
             border-radius: 60px;
             border: 3px solid #a6896b;
@@ -183,14 +183,14 @@
             display: block;
         }
         
-        /* КАРТИНКА - убраны отступы */
+        /* КАРТИНКА - МАКСИМАЛЬНО БЛИЗКО К ПРЕДМЕТАМ */
         .image-zone {
             position: relative;
             width: 100%;
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 10px auto; /* Уменьшил отступ снизу */
+            margin: 0 auto 0 auto; /* Убрал отступ снизу полностью */
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -204,13 +204,13 @@
             object-fit: contain;
             display: block;
             background: transparent;
-            pointer-events: auto; /* Важно для кликов */
+            pointer-events: auto;
         }
         
-        /* ЛУПА - теперь не мешает кликам */
+        /* ЛУПА - не мешает кликам */
         .magnifier-container {
             position: absolute;
-            pointer-events: none; /* Клики проходят сквозь лупу */
+            pointer-events: none;
             z-index: 100;
             display: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
@@ -256,7 +256,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - теперь ближе к картинке */
+        /* ПРЕДМЕТЫ - ВПЛОТНУЮ К КАРТИНКЕ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -265,7 +265,7 @@
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
-            margin: 5px 0 20px 0; /* Уменьшил отступ сверху */
+            margin: 0 0 20px 0; /* Убрал отступ сверху */
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
@@ -345,7 +345,6 @@
                 height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
-                margin-bottom: 5px;
             }
             
             #gameImage {
@@ -367,7 +366,7 @@
             .items-container {
                 gap: 20px;
                 padding: 15px;
-                margin-top: 5px;
+                margin-top: 0;
             }
             
             .item-image {
@@ -441,14 +440,14 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ БЛИЖЕ К КАРТИНКЕ -->
+            <!-- ПРЕДМЕТЫ ВПЛОТНУЮ К КАРТИНКЕ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ЛУПА (теперь точная)
+        // ЛУПА (СУПЕРТОЧНАЯ)
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -457,6 +456,7 @@
         const hintContainer = document.getElementById('hintContainer');
         
         let currentLevel = 1;
+        let isMagnifierActive = false;
         
         function updateHintVisibility() {
             hintContainer.style.display = currentLevel === 1 ? 'block' : 'none';
@@ -476,23 +476,22 @@
             }
             
             magnifierContainer.style.display = 'block';
+            isMagnifierActive = true;
             
             // Кончик ручки в точке касания
             magnifierContainer.style.left = x + 'px';
             magnifierContainer.style.top = y + 'px';
             
-            // Координаты на оригинальном изображении
-            const imgX = (x / rect.width) * gameImage.naturalWidth;
-            const imgY = (y / rect.height) * gameImage.naturalHeight;
-            
-            // Увеличение 1.2x с точным позиционированием
+            // ТОЧНОЕ позиционирование увеличения
             const zoomLevel = 1.2;
-            const bgX = imgX - (150 / zoomLevel);
-            const bgY = imgY - (150 / zoomLevel);
+            
+            // Вычисляем смещение фона
+            const bgX = (x / rect.width) * gameImage.naturalWidth * zoomLevel - 100;
+            const bgY = (y / rect.height) * gameImage.naturalHeight * zoomLevel - 100;
             
             magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
             magnifierGlass.style.backgroundSize = `${gameImage.naturalWidth * zoomLevel}px ${gameImage.naturalHeight * zoomLevel}px`;
-            magnifierGlass.style.backgroundPosition = `-${bgX * zoomLevel}px -${bgY * zoomLevel}px`;
+            magnifierGlass.style.backgroundPosition = `-${bgX}px -${bgY}px`;
         }
         
         // Мышь (ПК)
@@ -502,9 +501,16 @@
         
         imageZone.addEventListener('mouseleave', () => {
             magnifierContainer.style.display = 'none';
+            isMagnifierActive = false;
         });
         
         // Touch (телефоны)
+        imageZone.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            updateMagnifier(touch.clientX, touch.clientY);
+        });
+        
         imageZone.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
@@ -513,10 +519,14 @@
         
         imageZone.addEventListener('touchend', () => {
             magnifierContainer.style.display = 'none';
+            isMagnifierActive = false;
         });
         
-        // Клик работает всегда (лупа не мешает)
+        // Клик работает всегда (лупа временно скрывается)
         imageZone.addEventListener('click', (e) => {
+            // Временно скрываем лупу для клика
+            magnifierContainer.style.display = 'none';
+            
             const rect = imageZone.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
@@ -537,6 +547,13 @@
             });
 
             updateItemsList();
+            
+            // Возвращаем лупу если нужно
+            if (isMagnifierActive) {
+                setTimeout(() => {
+                    magnifierContainer.style.display = 'block';
+                }, 10);
+            }
         });
         
         // ============================================
