@@ -208,14 +208,13 @@
             pointer-events: auto;
         }
         
-        /* ЛУПА - РУЧКА СНАРУЖИ */
+        /* ЛУПА - УМЕНЬШЕННОЕ УВЕЛИЧЕНИЕ */
         .magnifier-container {
             position: absolute;
             pointer-events: none;
             z-index: 100;
             display: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
-            /* Кончик ручки в точке касания */
             transform: translate(-50%, -50%);
         }
         
@@ -229,7 +228,6 @@
             overflow: hidden;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(1px);
-            /* Лупа СМЕЩЕНА вверх-влево от ручки */
             transform: translate(-100%, -100%);
         }
         
@@ -242,7 +240,6 @@
             border: 4px solid #e9b87a;
             transform: rotate(45deg);
             transform-origin: 0 0;
-            /* Ручка начинается от точки касания */
             top: 0;
             left: 0;
             box-shadow: 0 8px 12px rgba(0,0,0,0.3);
@@ -444,7 +441,7 @@
 
     <script>
         // ============================================
-        // ЛУПА - ИДЕАЛЬНАЯ
+        // ЛУПА С УМЕНЬШЕННЫМ УВЕЛИЧЕНИЕМ
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -457,7 +454,7 @@
         let isLongPress = false;
         let startX, startY;
         
-        // КООРДИНАТЫ ПРЕДМЕТОВ (ЯВНО ПРОПИСЫВАЮ ЗАНОВО)
+        // ПРЕДМЕТЫ (радиус увеличен для удобства)
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 70, found: false },
             { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 70, found: false },
@@ -505,14 +502,23 @@
             magnifierContainer.style.left = clientX + 'px';
             magnifierContainer.style.top = clientY + 'px';
             
-            // Увеличение
-            const zoomLevel = 1.5;
-            const imgX = (x / rect.width) * gameImage.naturalWidth;
-            const imgY = (y / rect.height) * gameImage.naturalHeight;
-            const lensSize = 100;
+            // УВЕЛИЧЕНИЕ УМЕНЬШЕНО до 1.2x
+            const zoomLevel = 1.2;
             
-            const bgX = imgX - lensSize;
-            const bgY = imgY - lensSize;
+            // Координаты центра лупы (смещён относительно ручки)
+            const lensOffsetX = 100;
+            const lensOffsetY = 100;
+            
+            // Точка на картинке, которая должна быть в центре лупы
+            const imgCenterX = (x / rect.width) * gameImage.naturalWidth;
+            const imgCenterY = (y / rect.height) * gameImage.naturalHeight;
+            
+            // Размер области, показываемой в лупе
+            const lensSize = 150;
+            
+            // Вычисляем смещение фона
+            const bgX = imgCenterX - lensSize / 2;
+            const bgY = imgCenterY - lensSize / 2;
             
             magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
             magnifierGlass.style.backgroundSize = `${gameImage.naturalWidth}px ${gameImage.naturalHeight}px`;
