@@ -154,7 +154,7 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА НАД КАРТИНКОЙ */
+        /* ПОДСКАЗКА */
         .hint-container {
             text-align: center;
             margin-bottom: 10px;
@@ -196,7 +196,7 @@
             border: 8px solid #b5926a;
             cursor: crosshair;
             background: #f5e6d3;
-            touch-action: manipulation; /* Отключает стандартные жесты */
+            touch-action: manipulation;
         }
         
         #gameImage {
@@ -208,13 +208,15 @@
             pointer-events: auto;
         }
         
-        /* ЛУПА */
+        /* ЛУПА - РУЧКА СНАРУЖИ */
         .magnifier-container {
             position: absolute;
             pointer-events: none;
             z-index: 100;
             display: none;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+            /* Кончик ручки в точке касания */
+            transform: translate(-50%, -50%);
         }
         
         .magnifier-glass {
@@ -227,28 +229,29 @@
             overflow: hidden;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(1px);
-            transform: translate(-50%, -50%);
-            top: 0;
-            left: 0;
+            /* Лупа СМЕЩЕНА вверх-влево от ручки */
+            transform: translate(-100%, -100%);
         }
         
         .magnifier-handle {
             position: absolute;
-            width: 150px;
-            height: 25px;
+            width: 180px;
+            height: 30px;
             background: linear-gradient(145deg, #b5926a, #6b4f3a);
             border-radius: 30px;
             border: 4px solid #e9b87a;
-            transform: rotate(-35deg);
-            bottom: -50px;
-            right: -70px;
+            transform: rotate(45deg);
+            transform-origin: 0 0;
+            /* Ручка начинается от точки касания */
+            top: 0;
+            left: 0;
             box-shadow: 0 8px 12px rgba(0,0,0,0.3);
         }
         
         .magnifier-handle::after {
             content: '';
             position: absolute;
-            right: -15px;
+            right: -20px;
             top: 50%;
             transform: translateY(-50%);
             width: 30px;
@@ -256,6 +259,7 @@
             background: linear-gradient(145deg, #d4b595, #b5926a);
             border-radius: 50%;
             border: 3px solid #e9b87a;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
         
         /* ПРЕДМЕТЫ */
@@ -359,10 +363,8 @@
             }
             
             .magnifier-handle {
-                width: 120px;
-                height: 22px;
-                bottom: -40px;
-                right: -60px;
+                width: 140px;
+                height: 25px;
             }
             
             .items-container {
@@ -396,10 +398,8 @@
             }
             
             .magnifier-handle {
-                width: 100px;
-                height: 20px;
-                bottom: -35px;
-                right: -50px;
+                width: 120px;
+                height: 22px;
             }
             
             .item-image {
@@ -423,7 +423,7 @@
         <div id="gameScreen" class="game-screen">
             <!-- ПОДСКАЗКА -->
             <div class="hint-container" id="hintContainer">
-                <span class="hint-text" id="hintText">👇 коснись быстро = клик | задержись = лупа 🔍</span>
+                <span class="hint-text" id="hintText">👇 быстро = клик | задержись = лупа 🔍</span>
             </div>
             
             <div class="image-zone" id="imageZone">
@@ -444,7 +444,7 @@
 
     <script>
         // ============================================
-        // ЛУПА С ЗАДЕРЖКОЙ (ДЛЯ ТЕЛЕФОНОВ)
+        // ЛУПА - ИДЕАЛЬНАЯ
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -457,11 +457,37 @@
         let isLongPress = false;
         let startX, startY;
         
+        // КООРДИНАТЫ ПРЕДМЕТОВ (ЯВНО ПРОПИСЫВАЮ ЗАНОВО)
+        const level1Items = [
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 70, found: false },
+            { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 70, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 70, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 70, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 70, found: false }
+        ];
+        
+        const level2Items = [
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 70, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 70, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 70, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 70, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 70, found: false }
+        ];
+        
+        const level3Items = [
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 70, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 70, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 70, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 70, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 70, found: false }
+        ];
+
+        let items = level1Items;
+
         function updateHintVisibility() {
             hintContainer.style.display = currentLevel === 1 ? 'block' : 'none';
         }
         
-        // Функция обновления лупы
         function updateMagnifier(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             
@@ -474,8 +500,10 @@
             }
             
             magnifierContainer.style.display = 'block';
-            magnifierContainer.style.left = x + 'px';
-            magnifierContainer.style.top = y + 'px';
+            
+            // Кончик ручки в точке касания
+            magnifierContainer.style.left = clientX + 'px';
+            magnifierContainer.style.top = clientY + 'px';
             
             // Увеличение
             const zoomLevel = 1.5;
@@ -494,7 +522,7 @@
         }
         
         // ============================================
-        // ТЕЛЕФОН: логика нажатий
+        // ТЕЛЕФОН
         // ============================================
         imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -502,25 +530,22 @@
             startX = touch.clientX;
             startY = touch.clientY;
             
-            // Запускаем таймер долгого нажатия
             longPressTimer = setTimeout(() => {
                 isLongPress = true;
                 updateMagnifier(startX, startY);
-            }, 300); // 300 мс - грань между тапом и задержкой
+            }, 300);
         });
         
         imageZone.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
             
-            // Если уже зафиксировано долгое нажатие - двигаем лупу
             if (isLongPress) {
                 updateMagnifier(touch.clientX, touch.clientY);
             } else {
-                // Если палец сдвинулся слишком далеко - отменяем таймер
                 const dx = Math.abs(touch.clientX - startX);
                 const dy = Math.abs(touch.clientY - startY);
-                if (dx > 10 || dy > 10) {
+                if (dx > 15 || dy > 15) {
                     clearTimeout(longPressTimer);
                 }
             }
@@ -530,21 +555,19 @@
             e.preventDefault();
             
             if (!isLongPress) {
-                // Короткий тап - выполняем клик
                 const touch = e.changedTouches[0];
                 if (touch) {
                     handleClick(touch.clientX, touch.clientY);
                 }
             }
             
-            // Сбрасываем всё
             clearTimeout(longPressTimer);
             isLongPress = false;
             magnifierContainer.style.display = 'none';
         });
         
         // ============================================
-        // МЫШЬ (ПК) - без изменений
+        // МЫШЬ
         // ============================================
         imageZone.addEventListener('mousemove', (e) => {
             updateMagnifier(e.clientX, e.clientY);
@@ -559,7 +582,7 @@
         });
         
         // ============================================
-        // ОБЩИЙ ОБРАБОТЧИК КЛИКА
+        // ОБРАБОТЧИК КЛИКА
         // ============================================
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
@@ -575,7 +598,8 @@
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
-            let found = false;
+            console.log(`Клик: (${imgX}, ${imgY})`);
+
             items.forEach(item => {
                 if (!item.found) {
                     const dx = imgX - item.x;
@@ -584,14 +608,12 @@
                     
                     if (distance < item.radius) {
                         item.found = true;
-                        found = true;
+                        console.log(`Найден: ${item.name}`);
                     }
                 }
             });
 
-            if (found) {
-                updateItemsList();
-            }
+            updateItemsList();
         }
         
         // ============================================
@@ -663,34 +685,8 @@
         }
         
         // ============================================
-        // ПРЕДМЕТЫ
+        // ОБНОВЛЕНИЕ СПИСКА
         // ============================================
-        const level1Items = [
-            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 60, found: false },
-            { name: "ЗАЯЦ", file: "игра1/заяц.png", x: 183, y: 344, radius: 55, found: false },
-            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 55, found: false },
-            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 55, found: false },
-            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 55, found: false }
-        ];
-        
-        const level2Items = [
-            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 50, found: false },
-            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 50, found: false },
-            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 55, found: false },
-            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 55, found: false },
-            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 50, found: false }
-        ];
-        
-        const level3Items = [
-            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 50, found: false },
-            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 55, found: false },
-            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 50, found: false },
-            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 50, found: false },
-            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 50, found: false }
-        ];
-
-        let items = level1Items;
-
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
