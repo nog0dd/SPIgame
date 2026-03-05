@@ -183,7 +183,7 @@
             display: block;
         }
         
-        /* КАРТИНКА - МАКСИМАЛЬНО БЛИЗКО */
+        /* КАРТИНКА */
         .image-zone {
             position: relative;
             width: 100%;
@@ -196,6 +196,7 @@
             border: 8px solid #b5926a;
             cursor: crosshair;
             background: #f5e6d3;
+            touch-action: manipulation; /* Отключает стандартные жесты */
         }
         
         #gameImage {
@@ -207,7 +208,7 @@
             pointer-events: auto;
         }
         
-        /* ЛУПА - НОВАЯ ЛОГИКА */
+        /* ЛУПА */
         .magnifier-container {
             position: absolute;
             pointer-events: none;
@@ -257,7 +258,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ ВПЛОТНУЮ */
+        /* ПРЕДМЕТЫ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -422,7 +423,7 @@
         <div id="gameScreen" class="game-screen">
             <!-- ПОДСКАЗКА -->
             <div class="hint-container" id="hintContainer">
-                <span class="hint-text" id="hintText">зажми экран на картинке, чтобы разглядеть получше 🔍</span>
+                <span class="hint-text" id="hintText">👇 коснись быстро = клик | задержись = лупа 🔍</span>
             </div>
             
             <div class="image-zone" id="imageZone">
@@ -443,7 +444,7 @@
 
     <script>
         // ============================================
-        // НОВАЯ ЛУПА (ТЕПЕРЬ ТОЧНАЯ)
+        // ЛУПА С ЗАДЕРЖКОЙ (ДЛЯ ТЕЛЕФОНОВ)
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -452,56 +453,36 @@
         const hintContainer = document.getElementById('hintContainer');
         
         let currentLevel = 1;
+        let longPressTimer = null;
+        let isLongPress = false;
+        let startX, startY;
         
         function updateHintVisibility() {
             hintContainer.style.display = currentLevel === 1 ? 'block' : 'none';
         }
         
         // Функция обновления лупы
-        function updateMagnifier(e) {
+        function updateMagnifier(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             
-            // Получаем координаты касания
-            let clientX, clientY;
-            
-            if (e.touches) {
-                // Для touch-событий
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                // Для mouse-событий
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            
-            // Координаты относительно картинки
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             
-            // Проверяем, что внутри картинки
             if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
                 magnifierContainer.style.display = 'none';
                 return false;
             }
             
-            // Показываем лупу
             magnifierContainer.style.display = 'block';
-            
-            // ЛУПА В ЦЕНТРЕ КУРСОРА
             magnifierContainer.style.left = x + 'px';
             magnifierContainer.style.top = y + 'px';
             
-            // ПРАВИЛЬНОЕ увеличение
+            // Увеличение
             const zoomLevel = 1.5;
-            
-            // Координаты на оригинальной картинке
             const imgX = (x / rect.width) * gameImage.naturalWidth;
             const imgY = (y / rect.height) * gameImage.naturalHeight;
+            const lensSize = 100;
             
-            // Размер области захвата (то, что попадает в лупу)
-            const lensSize = 100; // пикселей на оригинале
-            
-            // Вычисляем смещение фона
             const bgX = imgX - lensSize;
             const bgY = imgY - lensSize;
             
@@ -512,60 +493,89 @@
             return true;
         }
         
-        // Mouse events
-        imageZone.addEventListener('mousemove', (e) => {
+        // ============================================
+        // ТЕЛЕФОН: логика нажатий
+        // ============================================
+        imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            updateMagnifier(e);
+            const touch = e.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            
+            // Запускаем таймер долгого нажатия
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                updateMagnifier(startX, startY);
+            }, 300); // 300 мс - грань между тапом и задержкой
+        });
+        
+        imageZone.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            
+            // Если уже зафиксировано долгое нажатие - двигаем лупу
+            if (isLongPress) {
+                updateMagnifier(touch.clientX, touch.clientY);
+            } else {
+                // Если палец сдвинулся слишком далеко - отменяем таймер
+                const dx = Math.abs(touch.clientX - startX);
+                const dy = Math.abs(touch.clientY - startY);
+                if (dx > 10 || dy > 10) {
+                    clearTimeout(longPressTimer);
+                }
+            }
+        });
+        
+        imageZone.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            
+            if (!isLongPress) {
+                // Короткий тап - выполняем клик
+                const touch = e.changedTouches[0];
+                if (touch) {
+                    handleClick(touch.clientX, touch.clientY);
+                }
+            }
+            
+            // Сбрасываем всё
+            clearTimeout(longPressTimer);
+            isLongPress = false;
+            magnifierContainer.style.display = 'none';
+        });
+        
+        // ============================================
+        // МЫШЬ (ПК) - без изменений
+        // ============================================
+        imageZone.addEventListener('mousemove', (e) => {
+            updateMagnifier(e.clientX, e.clientY);
         });
         
         imageZone.addEventListener('mouseleave', () => {
             magnifierContainer.style.display = 'none';
         });
         
-        // Touch events
-        imageZone.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            updateMagnifier(e);
-        });
-        
-        imageZone.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            updateMagnifier(e);
-        });
-        
-        imageZone.addEventListener('touchend', () => {
-            magnifierContainer.style.display = 'none';
-        });
-        
-        // ОТДЕЛЬНЫЙ обработчик клика (не зависит от лупы)
         imageZone.addEventListener('click', (e) => {
-            // Получаем координаты клика
+            handleClick(e.clientX, e.clientY);
+        });
+        
+        // ============================================
+        // ОБЩИЙ ОБРАБОТЧИК КЛИКА
+        // ============================================
+        function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
-            let clientX, clientY;
-            
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            
             const clickX = clientX - rect.left;
             const clickY = clientY - rect.top;
             
-            // Проверяем, что клик внутри картинки
             if (clickX < 0 || clickX > rect.width || clickY < 0 || clickY > rect.height) {
                 return;
             }
             
-            // Координаты на оригинальной картинке
             const scaleX = gameImage.naturalWidth / rect.width;
             const scaleY = gameImage.naturalHeight / rect.height;
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
-            // Проверяем предметы
+            let found = false;
             items.forEach(item => {
                 if (!item.found) {
                     const dx = imgX - item.x;
@@ -574,13 +584,15 @@
                     
                     if (distance < item.radius) {
                         item.found = true;
-                        console.log('Найден:', item.name);
+                        found = true;
                     }
                 }
             });
 
-            updateItemsList();
-        });
+            if (found) {
+                updateItemsList();
+            }
+        }
         
         // ============================================
         // АНКЕТА
