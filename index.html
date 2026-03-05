@@ -183,14 +183,14 @@
             display: block;
         }
         
-        /* КАРТИНКА - МАКСИМАЛЬНО БЛИЗКО К ПРЕДМЕТАМ */
+        /* КАРТИНКА - МАКСИМАЛЬНО БЛИЗКО */
         .image-zone {
             position: relative;
             width: 100%;
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 0 auto; /* Убрал отступ снизу полностью */
+            margin: 0 auto 0 auto;
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -207,7 +207,7 @@
             pointer-events: auto;
         }
         
-        /* ЛУПА - не мешает кликам */
+        /* ЛУПА - НОВАЯ ЛОГИКА */
         .magnifier-container {
             position: absolute;
             pointer-events: none;
@@ -226,20 +226,21 @@
             overflow: hidden;
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(1px);
-            transform: translate(-120%, -120%);
+            transform: translate(-50%, -50%);
+            top: 0;
+            left: 0;
         }
         
         .magnifier-handle {
             position: absolute;
-            width: 180px;
-            height: 30px;
+            width: 150px;
+            height: 25px;
             background: linear-gradient(145deg, #b5926a, #6b4f3a);
             border-radius: 30px;
             border: 4px solid #e9b87a;
-            transform-origin: 0 0;
-            transform: rotate(45deg);
-            top: 100px;
-            left: 100px;
+            transform: rotate(-35deg);
+            bottom: -50px;
+            right: -70px;
             box-shadow: 0 8px 12px rgba(0,0,0,0.3);
         }
         
@@ -256,7 +257,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - ВПЛОТНУЮ К КАРТИНКЕ */
+        /* ПРЕДМЕТЫ ВПЛОТНУЮ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -265,7 +266,7 @@
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
-            margin: 0 0 20px 0; /* Убрал отступ сверху */
+            margin: 0 0 20px 0;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
@@ -357,16 +358,15 @@
             }
             
             .magnifier-handle {
-                width: 140px;
-                height: 25px;
-                top: 80px;
-                left: 80px;
+                width: 120px;
+                height: 22px;
+                bottom: -40px;
+                right: -60px;
             }
             
             .items-container {
                 gap: 20px;
                 padding: 15px;
-                margin-top: 0;
             }
             
             .item-image {
@@ -395,19 +395,15 @@
             }
             
             .magnifier-handle {
-                width: 120px;
-                height: 22px;
-                top: 70px;
-                left: 70px;
+                width: 100px;
+                height: 20px;
+                bottom: -35px;
+                right: -50px;
             }
             
             .item-image {
                 width: 280px;
                 height: 280px;
-            }
-            
-            .hint-text {
-                font-size: 14px;
             }
         }
     </style>
@@ -424,7 +420,7 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <!-- ПОДСКАЗКА НАД КАРТИНКОЙ -->
+            <!-- ПОДСКАЗКА -->
             <div class="hint-container" id="hintContainer">
                 <span class="hint-text" id="hintText">зажми экран на картинке, чтобы разглядеть получше 🔍</span>
             </div>
@@ -440,14 +436,14 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ ВПЛОТНУЮ К КАРТИНКЕ -->
+            <!-- ПРЕДМЕТЫ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ЛУПА (СУПЕРТОЧНАЯ)
+        // НОВАЯ ЛУПА (ТЕПЕРЬ ТОЧНАЯ)
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -456,104 +452,134 @@
         const hintContainer = document.getElementById('hintContainer');
         
         let currentLevel = 1;
-        let isMagnifierActive = false;
         
         function updateHintVisibility() {
             hintContainer.style.display = currentLevel === 1 ? 'block' : 'none';
         }
         
-        function updateMagnifier(clientX, clientY) {
+        // Функция обновления лупы
+        function updateMagnifier(e) {
             const rect = imageZone.getBoundingClientRect();
             
-            // Координаты относительно контейнера
+            // Получаем координаты касания
+            let clientX, clientY;
+            
+            if (e.touches) {
+                // Для touch-событий
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                // Для mouse-событий
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            // Координаты относительно картинки
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             
-            // Проверяем, что курсор внутри картинки
+            // Проверяем, что внутри картинки
             if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
                 magnifierContainer.style.display = 'none';
-                return;
+                return false;
             }
             
+            // Показываем лупу
             magnifierContainer.style.display = 'block';
-            isMagnifierActive = true;
             
-            // Кончик ручки в точке касания
+            // ЛУПА В ЦЕНТРЕ КУРСОРА
             magnifierContainer.style.left = x + 'px';
             magnifierContainer.style.top = y + 'px';
             
-            // ТОЧНОЕ позиционирование увеличения
-            const zoomLevel = 1.2;
+            // ПРАВИЛЬНОЕ увеличение
+            const zoomLevel = 1.5;
+            
+            // Координаты на оригинальной картинке
+            const imgX = (x / rect.width) * gameImage.naturalWidth;
+            const imgY = (y / rect.height) * gameImage.naturalHeight;
+            
+            // Размер области захвата (то, что попадает в лупу)
+            const lensSize = 100; // пикселей на оригинале
             
             // Вычисляем смещение фона
-            const bgX = (x / rect.width) * gameImage.naturalWidth * zoomLevel - 100;
-            const bgY = (y / rect.height) * gameImage.naturalHeight * zoomLevel - 100;
+            const bgX = imgX - lensSize;
+            const bgY = imgY - lensSize;
             
             magnifierGlass.style.backgroundImage = `url('${gameImage.src}')`;
-            magnifierGlass.style.backgroundSize = `${gameImage.naturalWidth * zoomLevel}px ${gameImage.naturalHeight * zoomLevel}px`;
+            magnifierGlass.style.backgroundSize = `${gameImage.naturalWidth}px ${gameImage.naturalHeight}px`;
             magnifierGlass.style.backgroundPosition = `-${bgX}px -${bgY}px`;
+            
+            return true;
         }
         
-        // Мышь (ПК)
+        // Mouse events
         imageZone.addEventListener('mousemove', (e) => {
-            updateMagnifier(e.clientX, e.clientY);
+            e.preventDefault();
+            updateMagnifier(e);
         });
         
         imageZone.addEventListener('mouseleave', () => {
             magnifierContainer.style.display = 'none';
-            isMagnifierActive = false;
         });
         
-        // Touch (телефоны)
+        // Touch events
         imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            updateMagnifier(touch.clientX, touch.clientY);
+            updateMagnifier(e);
         });
         
         imageZone.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            updateMagnifier(touch.clientX, touch.clientY);
+            updateMagnifier(e);
         });
         
         imageZone.addEventListener('touchend', () => {
             magnifierContainer.style.display = 'none';
-            isMagnifierActive = false;
         });
         
-        // Клик работает всегда (лупа временно скрывается)
+        // ОТДЕЛЬНЫЙ обработчик клика (не зависит от лупы)
         imageZone.addEventListener('click', (e) => {
-            // Временно скрываем лупу для клика
-            magnifierContainer.style.display = 'none';
-            
+            // Получаем координаты клика
             const rect = imageZone.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
-
+            let clientX, clientY;
+            
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            const clickX = clientX - rect.left;
+            const clickY = clientY - rect.top;
+            
+            // Проверяем, что клик внутри картинки
+            if (clickX < 0 || clickX > rect.width || clickY < 0 || clickY > rect.height) {
+                return;
+            }
+            
+            // Координаты на оригинальной картинке
             const scaleX = gameImage.naturalWidth / rect.width;
             const scaleY = gameImage.naturalHeight / rect.height;
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
+            // Проверяем предметы
             items.forEach(item => {
                 if (!item.found) {
                     const dx = imgX - item.x;
                     const dy = imgY - item.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < item.radius) {
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (distance < item.radius) {
                         item.found = true;
+                        console.log('Найден:', item.name);
                     }
                 }
             });
 
             updateItemsList();
-            
-            // Возвращаем лупу если нужно
-            if (isMagnifierActive) {
-                setTimeout(() => {
-                    magnifierContainer.style.display = 'block';
-                }, 10);
-            }
         });
         
         // ============================================
@@ -701,8 +727,15 @@
             messageDiv.innerHTML = '';
         }
 
-        document.getElementById('gameImage').onload = updateItemsList;
-        if (document.getElementById('gameImage').complete) updateItemsList();
+        // Инициализация
+        gameImage.onload = () => {
+            updateItemsList();
+        };
+        
+        if (gameImage.complete) {
+            updateItemsList();
+        }
+        
         updateItemsList();
         updateHintVisibility();
     </script>
