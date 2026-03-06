@@ -154,10 +154,10 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА - ИСПРАВЛЕН ТЕКСТ */
+        /* ПОДСКАЗКА */
         .hint-container {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             padding: 12px 20px;
             background: #d4b595;
             border-radius: 60px;
@@ -258,7 +258,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - ВПЛОТНУЮ К КАРТИНКЕ */
+        /* ПРЕДМЕТЫ - ВПЛОТНУЮ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -411,7 +411,7 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- АНКЕТА -->
+        <!-- АНКЕТА (ТЕКСТ ИСПРАВЛЕН) -->
         <div id="loginScreen" class="login-screen">
             <p>Добро пожаловать в нашу антикварную лавку! Представься, пожалуйста!</p>
             <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
@@ -421,11 +421,12 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <!-- ПОДСКАЗКА - НОВЫЙ ТЕКСТ -->
-            <div class="hint-container" id="hintContainer">
+            <!-- ПОДСКАЗКА -->
+            <div class="hint-container">
                 <span class="hint-text">🔍 задержи палец на картинке для увеличения</span>
             </div>
             
+            <!-- КАРТИНКА ВПРИТЫК -->
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
                 <!-- ЛУПА -->
@@ -450,14 +451,13 @@
         const magnifierContainer = document.getElementById('magnifierContainer');
         const magnifierGlass = document.getElementById('magnifierGlass');
         const gameImage = document.getElementById('gameImage');
-        const hintContainer = document.getElementById('hintContainer');
         
         let currentLevel = 1;
         let longPressTimer = null;
         let isLongPress = false;
         let startX, startY;
         
-        // ПРЕДМЕТЫ - ХИТБОКСЫ УВЕЛИЧЕНЫ ДО 120
+        // ПРЕДМЕТЫ - ХИТБОКСЫ 120
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 120, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 120, found: false },
@@ -519,9 +519,7 @@
             return true;
         }
         
-        // ============================================
         // ТЕЛЕФОН
-        // ============================================
         imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
@@ -564,9 +562,7 @@
             magnifierContainer.style.display = 'none';
         });
         
-        // ============================================
         // МЫШЬ
-        // ============================================
         imageZone.addEventListener('mousemove', (e) => {
             updateMagnifier(e.clientX, e.clientY);
         });
@@ -579,9 +575,7 @@
             handleClick(e.clientX, e.clientY);
         });
         
-        // ============================================
         // ОБРАБОТЧИК КЛИКА
-        // ============================================
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             const clickX = clientX - rect.left;
@@ -612,9 +606,7 @@
             updateItemsList();
         }
         
-        // ============================================
         // АНКЕТА
-        // ============================================
         let currentPlayer = {
             name: '',
             institute: ''
@@ -635,12 +627,11 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').classList.add('active');
             
-            showLevelSplash('Слушай, у меня здесь затерялось парочку диковин, не поможешь найти?');
+            // ЗАСТАВКИ С ИСПРАВЛЕННЫМИ ТЕКСТАМИ
+            showLevelSplash('Слушай, у нас здесь затерялось парочку диковин, не поможешь найти?');
         }
         
-        // ============================================
         // ЗАСТАВКИ
-        // ============================================
         function showLevelSplash(text) {
             const splash = document.createElement('div');
             splash.className = 'splash-screen';
@@ -663,7 +654,7 @@
             splash.className = 'splash-screen';
             splash.innerHTML = `
                 <div class="splash-content">
-                    <p>Ну ты настоящий сыщик! Очень помог мне. В долгу не останусь!</p>
+                    <p>Ну ты настоящий сыщик! Очень помог нам. В долгу не останемся!</p>
                     <button class="restart-btn" onclick="restartToLogin()">К НАЧАЛУ</button>
                 </div>
             `;
@@ -680,9 +671,7 @@
             document.getElementById('loginBtn').disabled = true;
         }
         
-        // ============================================
         // ОБНОВЛЕНИЕ СПИСКА
-        // ============================================
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
@@ -701,7 +690,7 @@
                     switchToLevel(2);
                 } else if (currentLevel === 2) {
                     messageDiv.innerHTML = '';
-                    showLevelSplash('У тебя отлично получается! Как на счёт того, чтобы в последний раз выручить меня? Постарайся найти эти предметы');
+                    showLevelSplash('У тебя отлично получается! Как на счёт того, чтобы в последний раз выручить нас? Постарайся найти эти предметы');
                     switchToLevel(3);
                 } else if (currentLevel === 3) {
                     messageDiv.innerHTML = '';
