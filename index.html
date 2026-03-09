@@ -183,7 +183,7 @@
             display: block;
         }
         
-        /* КАРТИНКА */
+        /* КАРТИНКА - НОРМАЛЬНЫЙ РАЗМЕР */
         .image-zone {
             position: relative;
             width: 100%;
@@ -258,7 +258,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - ПО УМОЛЧАНИЮ (ДЛЯ КОМПА) */
+        /* ПРЕДМЕТЫ - НА КОМПЕ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -300,7 +300,7 @@
             min-height: 80px;
         }
         
-        /* ТЕЛЕФОНЫ - ВСЁ В ОДНУ СТРОКУ БЕЗ СКРОЛЛА */
+        /* ТЕЛЕФОНЫ - ВСЁ ЧЁТКО */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -342,43 +342,50 @@
                 font-size: 18px;
             }
             
-            /* КАРТИНКА НА ТЕЛЕФОНЕ - ВПРИТЫК */
+            /* КАРТИНКА - НОРМАЛЬНАЯ, НЕ СПЛЮЩЕННАЯ */
             .image-zone {
-                aspect-ratio: auto;
-                height: 50vh; /* Чуть меньше, чтобы всё влезло */
-                max-height: 450px;
+                aspect-ratio: 1400/900; /* ВЕРНУЛ ПРОПОРЦИИ */
+                height: auto;
+                max-height: none;
                 border-width: 4px;
-                margin: 0 auto 0 auto; /* Без нижнего отступа */
+                margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
+                width: 100%;
             }
             
             #gameImage {
-                object-fit: cover;
+                object-fit: contain; /* НЕ РАСТЯГИВАЕМ, А ВПИСЫВАЕМ */
             }
             
-            /* ПРЕДМЕТЫ - В ОДНУ СТРОКУ, БЕЗ СКРОЛЛА */
+            /* ПРЕДМЕТЫ - В ОДНУ СТРОКУ, ВПЛОТНУЮ К КАРТИНКЕ */
             .items-container {
                 display: flex;
-                flex-wrap: wrap; /* Перенос на новую строку, если не влезут */
-                justify-content: center;
+                flex-direction: row;
+                flex-wrap: nowrap; /* ЗАПРЕЩАЕМ ПЕРЕНОС */
+                overflow-x: auto; /* РАЗРЕШАЕМ ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ, ЕСЛИ НЕ ВЛЕЗУТ */
+                justify-content: flex-start;
                 gap: 10px;
                 padding: 10px;
                 background: #d4b595;
                 border-radius: 30px;
                 border: 3px solid #a6896b;
-                margin-top: 0; /* Вплотную к картинке */
-                overflow-x: visible; /* Убираем скролл */
-                white-space: normal; /* Отключаем white-space */
+                margin-top: 0; /* ВПЛОТНУЮ К КАРТИНКЕ */
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
             }
             
-            /* УМЕНЬШАЕМ ПРЕДМЕТЫ, ЧТОБЫ ВСЕ 5 ВЛЕЗЛИ */
+            /* РАЗМЕР ПРЕДМЕТОВ - ЧТОБЫ ХОТЯ БЫ 4 ПОМЕСТИЛОСЬ, НО БЫЛИ ВИДНЫ */
             .item-image {
-                width: calc(20% - 10px); /* 5 предметов в ряд */
-                min-width: 120px; /* Минимальный размер */
-                height: auto;
-                aspect-ratio: 1/1;
-                flex-shrink: 1;
+                width: 160px;
+                height: 160px;
+                flex-shrink: 0;
                 border-width: 4px;
                 padding: 8px;
+                margin: 0;
+            }
+            
+            /* ХИТБОКСЫ - ОГРОМНЫЕ, ЧТОБЫ ЛЕГКО ПОПАСТЬ */
+            .item-image {
+                cursor: pointer;
             }
             
             .magnifier-glass {
@@ -402,16 +409,11 @@
             }
         }
         
-        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
+        /* МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
         @media (max-width: 480px) {
-            .image-zone {
-                height: 40vh;
-                max-height: 350px;
-            }
-            
             .item-image {
-                width: calc(20% - 8px);
-                min-width: 90px;
+                width: 140px;
+                height: 140px;
             }
             
             .hint-text {
@@ -479,29 +481,29 @@
         let startX, startY;
         let isMouseDown = false;
         
-        // ПРЕДМЕТЫ
+        // ПРЕДМЕТЫ - ХИТБОКСЫ 150, ЧТОБЫ ТОЧНО ПОПАДАТЬ
         const level1Items = [
-            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 120, found: false },
-            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 120, found: false },
-            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 120, found: false },
-            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 120, found: false },
-            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 120, found: false }
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 150, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 150, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 150, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 150, found: false },
+            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 150, found: false }
         ];
         
         const level2Items = [
-            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 120, found: false },
-            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 120, found: false },
-            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 120, found: false },
-            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 120, found: false },
-            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 120, found: false }
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 150, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 150, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 150, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 150, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 150, found: false }
         ];
         
         const level3Items = [
-            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 120, found: false },
-            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 120, found: false },
-            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 120, found: false },
-            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 120, found: false },
-            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 120, found: false }
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 150, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 150, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 150, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 150, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 150, found: false }
         ];
 
         let items = level1Items;
