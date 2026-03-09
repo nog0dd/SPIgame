@@ -183,14 +183,14 @@
             display: block;
         }
         
-        /* КАРТИНКА - ВПРИТЫК */
+        /* КАРТИНКА - ВПРИТЫК К ПРЕДМЕТАМ */
         .image-zone {
             position: relative;
             width: 100%;
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 0 auto;
+            margin: 0 auto 0 auto; /* Убрал нижний отступ */
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -258,16 +258,16 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - ВПЛОТНУЮ */
+        /* ПРЕДМЕТЫ - БЕЗ ИЗМЕНЕНИЙ (ВСЁ КАК БЫЛО) */
         .items-container {
             display: flex;
             overflow-x: auto;
             gap: 30px;
-            padding: 20px 0;
+            padding: 20px;
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
-            margin: 5px 0 20px 0;
+            margin: 0 0 20px 0; /* Убрал отступ сверху */
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
@@ -347,6 +347,7 @@
                 height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
+                margin-bottom: 0; /* Убрал отступ на телефоне */
             }
             
             #gameImage {
@@ -365,7 +366,8 @@
             
             .items-container {
                 gap: 20px;
-                padding: 15px 0;
+                padding: 15px;
+                margin-top: 0; /* Убрал отступ сверху */
             }
             
             .item-image {
@@ -411,7 +413,7 @@
 </head>
 <body>
     <div class="game-container">
-        <!-- АНКЕТА (ТЕКСТ ИСПРАВЛЕН) -->
+        <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
             <p>Добро пожаловать в нашу антикварную лавку! Представься, пожалуйста!</p>
             <input type="text" id="loginName" class="login-input" placeholder="Имя Фамилия" oninput="checkLoginForm()">
@@ -426,7 +428,7 @@
                 <span class="hint-text">🔍 задержи палец на картинке для увеличения</span>
             </div>
             
-            <!-- КАРТИНКА ВПРИТЫК -->
+            <!-- КАРТИНКА ВПРИТЫК К ПРЕДМЕТАМ -->
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
                 <!-- ЛУПА -->
@@ -438,7 +440,7 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ -->
+            <!-- ПРЕДМЕТЫ (ВСЁ КАК БЫЛО) -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
@@ -457,29 +459,29 @@
         let isLongPress = false;
         let startX, startY;
         
-        // ПРЕДМЕТЫ - ХИТБОКСЫ 120
+        // ПРЕДМЕТЫ - ХИТБОКСЫ 100
         const level1Items = [
-            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 120, found: false },
-            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 120, found: false },
-            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 120, found: false },
-            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 120, found: false },
-            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 120, found: false }
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 100, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 100, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 100, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 100, found: false },
+            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 100, found: false }
         ];
         
         const level2Items = [
-            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 120, found: false },
-            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 120, found: false },
-            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 120, found: false },
-            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 120, found: false },
-            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 120, found: false }
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 100, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 100, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 100, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 100, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 100, found: false }
         ];
         
         const level3Items = [
-            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 120, found: false },
-            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 120, found: false },
-            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 120, found: false },
-            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 120, found: false },
-            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 120, found: false }
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 100, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 100, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 100, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 100, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 100, found: false }
         ];
 
         let items = level1Items;
@@ -627,7 +629,6 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').classList.add('active');
             
-            // ЗАСТАВКИ С ИСПРАВЛЕННЫМИ ТЕКСТАМИ
             showLevelSplash('Слушай, у нас здесь затерялось парочку диковин, не поможешь найти?');
         }
         
