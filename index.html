@@ -154,7 +154,7 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА */
+        /* ПОДСКАЗКА - ИСПРАВЛЕН ТЕКСТ */
         .hint-container {
             text-align: center;
             margin-bottom: 5px;
@@ -190,7 +190,7 @@
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 30px auto;
+            margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -283,6 +283,7 @@
             border: 8px solid #e9d4b0;
             background: #f5e6d3;
             padding: 15px;
+            transform: scale(1.1); /* УВЕЛИЧИВАЕМ КАРТИНКУ ВНУТРИ РАМКИ */
         }
         
         .item-image.found {
@@ -348,7 +349,7 @@
                 height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
-                margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
+                margin: 0 auto 0 auto;
             }
             
             #gameImage {
@@ -362,23 +363,24 @@
                 flex-wrap: nowrap;
                 justify-content: space-between;
                 gap: 4px;
-                padding: 0; /* УБРАЛ ВНУТРЕННИЙ ОТСТУП */
+                padding: 0;
                 background: transparent;
                 border: none;
-                margin-top: 0; /* УБРАЛ ВЕРХНИЙ ОТСТУП */
+                margin-top: 0;
                 margin-bottom: 0;
                 width: 100%;
                 overflow-x: visible;
             }
             
-            /* КАРТИНКИ ПРЕДМЕТОВ УВЕЛИЧЕНЫ, НО ВЛЕЗАЮТ В РЯД */
+            /* КАРТИНКИ ПРЕДМЕТОВ УВЕЛИЧЕНЫ ВНУТРИ РАМОК */
             .item-image {
-                width: 19%; /* ЧУТЬ БОЛЬШЕ, НО 5 ШТУК ВЛЕЗАЕТ */
+                width: 19%;
                 height: auto;
                 aspect-ratio: 1/1;
                 border-width: 2px;
                 padding: 2px;
                 margin: 0;
+                transform: scale(1.15); /* ЕЩЁ БОЛЬШЕ НА ТЕЛЕФОНЕ */
             }
             
             .magnifier-glass {
@@ -411,6 +413,7 @@
             
             .item-image {
                 width: 19%;
+                transform: scale(1.1);
             }
             
             .hint-text {
@@ -430,7 +433,6 @@
     </style>
 </head>
 <body>
-    <!-- ВЕСЬ HTML БЕЗ ИЗМЕНЕНИЙ -->
     <div class="game-container">
         <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
@@ -442,9 +444,9 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <!-- ПОДСКАЗКА -->
+            <!-- ПОДСКАЗКА С ИСПРАВЛЕННЫМ ТЕКСТОМ -->
             <div class="hint-container">
-                <span class="hint-text">🔍 нажми на картинку для лупы (комп) / задержи палец (телефон)</span>
+                <span class="hint-text">🔍 нажми на картинку для лупы (ПК) / задержи палец (телефон)</span>
             </div>
             
             <!-- КАРТИНКА -->
