@@ -183,14 +183,14 @@
             display: block;
         }
         
-        /* КАРТИНКА - ВПРИТЫК К ПРЕДМЕТАМ */
+        /* КАРТИНКА - УВЕЛИЧЕНА, ЧТОБЫ ДОСТАВАТЬ ДО СКРОЛЛА */
         .image-zone {
             position: relative;
             width: 100%;
             max-width: 1400px;
             height: auto;
-            aspect-ratio: 1400/900;
-            margin: 0 auto 0 auto; /* Убрал нижний отступ */
+            aspect-ratio: 1400/800; /* Изменил пропорции, чтобы картинка была выше */
+            margin: 0 auto 0 auto;
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -202,7 +202,7 @@
         #gameImage {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover; /* Изменил на cover, чтобы картинка заполняла всё пространство */
             display: block;
             background: transparent;
             pointer-events: auto;
@@ -258,7 +258,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - БЕЗ ИЗМЕНЕНИЙ (ВСЁ КАК БЫЛО) */
+        /* ПРЕДМЕТЫ */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -267,7 +267,7 @@
             background: #d4b595;
             border-radius: 60px;
             border: 4px solid #a6896b;
-            margin: 0 0 20px 0; /* Убрал отступ сверху */
+            margin: 0 0 20px 0; /* Убран верхний отступ */
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
@@ -344,10 +344,9 @@
             
             .image-zone {
                 aspect-ratio: auto;
-                height: 70vh;
-                max-height: 600px;
+                height: 75vh; /* Увеличена высота на телефоне */
+                max-height: 650px;
                 border-width: 4px;
-                margin-bottom: 0; /* Убрал отступ на телефоне */
             }
             
             #gameImage {
@@ -367,7 +366,6 @@
             .items-container {
                 gap: 20px;
                 padding: 15px;
-                margin-top: 0; /* Убрал отступ сверху */
             }
             
             .item-image {
@@ -387,7 +385,7 @@
         
         @media (max-width: 480px) {
             .image-zone {
-                height: 60vh;
+                height: 65vh;
             }
             
             .magnifier-glass {
@@ -428,7 +426,7 @@
                 <span class="hint-text">🔍 задержи палец на картинке для увеличения</span>
             </div>
             
-            <!-- КАРТИНКА ВПРИТЫК К ПРЕДМЕТАМ -->
+            <!-- КАРТИНКА УВЕЛИЧЕНА -->
             <div class="image-zone" id="imageZone">
                 <img src="игра1/игра.jpg" id="gameImage" alt="Антикварная лавка">
                 <!-- ЛУПА -->
@@ -440,7 +438,7 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ (ВСЁ КАК БЫЛО) -->
+            <!-- ПРЕДМЕТЫ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
@@ -459,7 +457,7 @@
         let isLongPress = false;
         let startX, startY;
         
-        // ПРЕДМЕТЫ - ХИТБОКСЫ 100
+        // ПРЕДМЕТЫ
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 100, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 100, found: false },
