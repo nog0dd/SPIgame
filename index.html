@@ -154,7 +154,7 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА - ИСПРАВЛЕН ТЕКСТ */
+        /* ПОДСКАЗКА */
         .hint-container {
             text-align: center;
             margin-bottom: 5px;
@@ -190,7 +190,7 @@
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
+            margin: 0 auto 0 auto;
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -283,7 +283,7 @@
             border: 8px solid #e9d4b0;
             background: #f5e6d3;
             padding: 15px;
-            transform: scale(1.1); /* УВЕЛИЧИВАЕМ КАРТИНКУ ВНУТРИ РАМКИ */
+            transform: scale(1.1);
         }
         
         .item-image.found {
@@ -301,7 +301,7 @@
             min-height: 80px;
         }
         
-        /* ТЕЛЕФОНЫ - ВСЁ ПО ТРЕБОВАНИЮ */
+        /* ТЕЛЕФОНЫ */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -380,7 +380,7 @@
                 border-width: 2px;
                 padding: 2px;
                 margin: 0;
-                transform: scale(1.15); /* ЕЩЁ БОЛЬШЕ НА ТЕЛЕФОНЕ */
+                transform: scale(1.15);
             }
             
             .magnifier-glass {
@@ -444,7 +444,7 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
-            <!-- ПОДСКАЗКА С ИСПРАВЛЕННЫМ ТЕКСТОМ -->
+            <!-- ПОДСКАЗКА -->
             <div class="hint-container">
                 <span class="hint-text">🔍 нажми на картинку для лупы (ПК) / задержи палец (телефон)</span>
             </div>
@@ -461,14 +461,14 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ - ВПРИТЫК К КАРТИНКЕ -->
+            <!-- ПРЕДМЕТЫ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ЛУПА (БЕЗ ИЗМЕНЕНИЙ)
+        // ЛУПА
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -480,30 +480,31 @@
         let isLongPress = false;
         let startX, startY;
         let isMouseDown = false;
+        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         
-        // ПРЕДМЕТЫ
+        // ПРЕДМЕТЫ - РАЗНЫЕ ХИТБОКСЫ ДЛЯ ПК И ТЕЛЕФОНА
         const level1Items = [
-            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 120, found: false },
-            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 120, found: false },
-            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 120, found: false },
-            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 120, found: false },
-            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 120, found: false }
+            { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЗЕРКАЛО", file: "игра1/зеркало.png", x: 288, y: 396, radius: 70, phoneRadius: 200, found: false },
+            { name: "ВАЗА", file: "игра1/ваза.png", x: 321, y: 416, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЗЕРКАЛО2", file: "игра1/зеркало2.png", x: 228, y: 565, radius: 70, phoneRadius: 200, found: false }
         ];
         
         const level2Items = [
-            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 120, found: false },
-            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 120, found: false },
-            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 120, found: false },
-            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 120, found: false },
-            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 120, found: false }
+            { name: "КАРТИНА", file: "игра2/картина.png", x: 231, y: 268, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЧАСИКИ", file: "игра2/часики.png", x: 336, y: 251, radius: 70, phoneRadius: 200, found: false },
+            { name: "САМОВАР", file: "игра2/самовар.png", x: 327, y: 699, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЧУЧЕЛО", file: "игра2/чучело.png", x: 237, y: 858, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЗАМОК", file: "игра2/замок.png", x: 224, y: 650, radius: 70, phoneRadius: 200, found: false }
         ];
         
         const level3Items = [
-            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 120, found: false },
-            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 120, found: false },
-            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 120, found: false },
-            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 120, found: false },
-            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 120, found: false }
+            { name: "РУСАЛКА", file: "игра3/русалка.png", x: 277, y: 118, radius: 70, phoneRadius: 200, found: false },
+            { name: "ТАРЕЛКА", file: "игра3/тарелка.png", x: 464, y: 542, radius: 70, phoneRadius: 200, found: false },
+            { name: "ЛАМПА", file: "игра3/лампа.png", x: 373, y: 321, radius: 70, phoneRadius: 200, found: false },
+            { name: "ШКАТУЛКА", file: "игра3/шкатулка.png", x: 563, y: 750, radius: 70, phoneRadius: 200, found: false },
+            { name: "УРНА", file: "игра3/урна.png", x: 423, y: 674, radius: 70, phoneRadius: 200, found: false }
         ];
 
         let items = level1Items;
@@ -630,15 +631,21 @@
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
 
+            // Определяем, какое устройство
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            
             items.forEach(item => {
                 if (!item.found) {
                     const dx = imgX - item.x;
                     const dy = imgY - item.y;
                     const distance = Math.sqrt(dx*dx + dy*dy);
                     
-                    if (distance < item.radius) {
+                    // Используем разные радиусы для ПК и телефона
+                    const activeRadius = isTouch ? item.phoneRadius : item.radius;
+                    
+                    if (distance < activeRadius) {
                         item.found = true;
-                        console.log(`Найден: ${item.name}`);
+                        console.log(`Найден: ${item.name} (${isTouch ? 'телефон' : 'ПК'})`);
                     }
                 }
             });
