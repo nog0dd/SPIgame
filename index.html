@@ -183,7 +183,7 @@
             display: block;
         }
         
-        /* КАРТИНКА - НА КОМПЬЮТЕРЕ КАК БЫЛА */
+        /* КАРТИНКА */
         .image-zone {
             position: relative;
             width: 100%;
@@ -258,7 +258,7 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - УВЕЛИЧЕНЫ В 2 РАЗА */
+        /* ПРЕДМЕТЫ - ПО УМОЛЧАНИЮ (ДЛЯ КОМПА) */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -273,8 +273,8 @@
         }
         
         .item-image {
-            width: 700px;  /* Увеличено с 350px */
-            height: 700px;  /* Увеличено с 350px */
+            width: 350px;
+            height: 350px;
             flex-shrink: 0;
             object-fit: cover;
             transition: 0.3s;
@@ -300,7 +300,7 @@
             min-height: 80px;
         }
         
-        /* ТЕЛЕФОНЫ - КАРТИНКА ВПРИТЫК */
+        /* ТЕЛЕФОНЫ - ВСЁ В ОДНУ СТРОКУ БЕЗ СКРОЛЛА */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -345,54 +345,40 @@
             /* КАРТИНКА НА ТЕЛЕФОНЕ - ВПРИТЫК */
             .image-zone {
                 aspect-ratio: auto;
-                height: 70vh;
-                max-height: 600px;
+                height: 50vh; /* Чуть меньше, чтобы всё влезло */
+                max-height: 450px;
                 border-width: 4px;
-                margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
+                margin: 0 auto 0 auto; /* Без нижнего отступа */
             }
             
             #gameImage {
                 object-fit: cover;
             }
             
-            /* ПРЕДМЕТЫ БЕЗ ВЕРХНЕГО ОТСТУПА */
+            /* ПРЕДМЕТЫ - В ОДНУ СТРОКУ, БЕЗ СКРОЛЛА */
             .items-container {
-                gap: 15px;
-                padding: 15px;
-                margin-top: 0; /* УБРАЛ ВЕРХНИЙ ОТСТУП */
+                display: flex;
+                flex-wrap: wrap; /* Перенос на новую строку, если не влезут */
+                justify-content: center;
+                gap: 10px;
+                padding: 10px;
+                background: #d4b595;
+                border-radius: 30px;
+                border: 3px solid #a6896b;
+                margin-top: 0; /* Вплотную к картинке */
+                overflow-x: visible; /* Убираем скролл */
+                white-space: normal; /* Отключаем white-space */
             }
             
-            /* ПРЕДМЕТЫ НА ТЕЛЕФОНЕ - УВЕЛИЧЕНЫ */
+            /* УМЕНЬШАЕМ ПРЕДМЕТЫ, ЧТОБЫ ВСЕ 5 ВЛЕЗЛИ */
             .item-image {
-                width: 500px;  /* Увеличено с 300px */
-                height: 500px;  /* Увеличено с 300px */
-                border-width: 6px;
-                padding: 12px;
-            }
-            
-            .magnifier-glass {
-                width: 160px;
-                height: 160px;
-            }
-            
-            .magnifier-handle {
-                width: 140px;
-                height: 25px;
-            }
-            
-            #message {
-                font-size: 28px;
-            }
-            
-            .restart-btn {
-                font-size: 22px;
-                padding: 15px 30px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .image-zone {
-                height: 60vh;
+                width: calc(20% - 10px); /* 5 предметов в ряд */
+                min-width: 120px; /* Минимальный размер */
+                height: auto;
+                aspect-ratio: 1/1;
+                flex-shrink: 1;
+                border-width: 4px;
+                padding: 8px;
             }
             
             .magnifier-glass {
@@ -405,13 +391,41 @@
                 height: 22px;
             }
             
+            #message {
+                font-size: 24px;
+                margin: 5px 0;
+            }
+            
+            .restart-btn {
+                font-size: 20px;
+                padding: 12px 25px;
+            }
+        }
+        
+        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
+        @media (max-width: 480px) {
+            .image-zone {
+                height: 40vh;
+                max-height: 350px;
+            }
+            
             .item-image {
-                width: 400px;  /* Увеличено с 280px */
-                height: 400px;  /* Увеличено с 280px */
+                width: calc(20% - 8px);
+                min-width: 90px;
             }
             
             .hint-text {
-                font-size: 16px;
+                font-size: 14px;
+            }
+            
+            .magnifier-glass {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .magnifier-handle {
+                width: 100px;
+                height: 20px;
             }
         }
     </style>
@@ -445,14 +459,14 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ (УВЕЛИЧЕННЫЕ) -->
+            <!-- ПРЕДМЕТЫ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ЛУПА - РАЗДЕЛЬНАЯ ЛОГИКА
+        // ЛУПА
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -463,9 +477,9 @@
         let longPressTimer = null;
         let isLongPress = false;
         let startX, startY;
-        let isMouseDown = false; // Для ПК: зажата ли кнопка мыши
+        let isMouseDown = false;
         
-        // ПРЕДМЕТЫ (координаты те же, хитбоксы увеличены)
+        // ПРЕДМЕТЫ
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 120, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 120, found: false },
@@ -527,9 +541,7 @@
             return true;
         }
         
-        // ============================================
-        // ТЕЛЕФОН (долгое нажатие)
-        // ============================================
+        // ТЕЛЕФОН
         imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
@@ -572,9 +584,7 @@
             magnifierContainer.style.display = 'none';
         });
         
-        // ============================================
-        // МЫШЬ (ПК) - лупа только при зажатой кнопке
-        // ============================================
+        // МЫШЬ
         imageZone.addEventListener('mousedown', (e) => {
             e.preventDefault();
             isMouseDown = true;
@@ -603,9 +613,7 @@
             }
         });
         
-        // ============================================
         // ОБРАБОТЧИК КЛИКА
-        // ============================================
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             const clickX = clientX - rect.left;
@@ -636,9 +644,7 @@
             updateItemsList();
         }
         
-        // ============================================
         // АНКЕТА
-        // ============================================
         let currentPlayer = {
             name: '',
             institute: ''
@@ -662,9 +668,7 @@
             showLevelSplash('Слушай, у нас здесь затерялось парочку диковин, не поможешь найти?');
         }
         
-        // ============================================
         // ЗАСТАВКИ
-        // ============================================
         function showLevelSplash(text) {
             const splash = document.createElement('div');
             splash.className = 'splash-screen';
@@ -704,9 +708,7 @@
             document.getElementById('loginBtn').disabled = true;
         }
         
-        // ============================================
         // ОБНОВЛЕНИЕ СПИСКА
-        // ============================================
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
