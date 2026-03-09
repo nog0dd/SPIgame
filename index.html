@@ -183,14 +183,14 @@
             display: block;
         }
         
-        /* КАРТИНКА - НА КОМПЬЮТЕРЕ ВСЁ КАК БЫЛО */
+        /* КАРТИНКА - НА КОМПЬЮТЕРЕ КАК БЫЛА */
         .image-zone {
             position: relative;
             width: 100%;
             max-width: 1400px;
             height: auto;
             aspect-ratio: 1400/900;
-            margin: 0 auto 30px auto; /* Стандартный отступ */
+            margin: 0 auto 30px auto;
             border-radius: 0;
             overflow: hidden;
             border: 8px solid #b5926a;
@@ -342,14 +342,13 @@
                 font-size: 18px;
             }
             
-            /* КАРТИНКА НА ТЕЛЕФОНЕ - БЕЗ НИЖНЕГО ОТСТУПА */
+            /* КАРТИНКА НА ТЕЛЕФОНЕ - ВПРИТЫК */
             .image-zone {
                 aspect-ratio: auto;
                 height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
-                margin: 0 auto 0 auto; /* Убираю нижний отступ */
-                margin-bottom: 0;
+                margin: 0 auto 0 auto; /* Убрал нижний отступ */
             }
             
             #gameImage {
@@ -360,7 +359,7 @@
             .items-container {
                 gap: 20px;
                 padding: 15px;
-                margin-top: 0; /* Убираю верхний отступ */
+                margin-top: 0; /* Убрал верхний отступ */
             }
             
             .magnifier-glass {
@@ -428,7 +427,7 @@
         <div id="gameScreen" class="game-screen">
             <!-- ПОДСКАЗКА -->
             <div class="hint-container">
-                <span class="hint-text">🔍 задержи палец на картинке для увеличения</span>
+                <span class="hint-text">🔍 нажми на картинку для лупы (комп) / задержи палец (телефон)</span>
             </div>
             
             <!-- КАРТИНКА -->
@@ -450,7 +449,7 @@
 
     <script>
         // ============================================
-        // ЛУПА
+        // ЛУПА - РАЗДЕЛЬНАЯ ЛОГИКА
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -461,6 +460,7 @@
         let longPressTimer = null;
         let isLongPress = false;
         let startX, startY;
+        let isMouseDown = false; // Для ПК: зажата ли кнопка мыши
         
         // ПРЕДМЕТЫ
         const level1Items = [
@@ -524,7 +524,9 @@
             return true;
         }
         
-        // ТЕЛЕФОН
+        // ============================================
+        // ТЕЛЕФОН (долгое нажатие)
+        // ============================================
         imageZone.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const touch = e.touches[0];
@@ -567,20 +569,41 @@
             magnifierContainer.style.display = 'none';
         });
         
-        // МЫШЬ
-        imageZone.addEventListener('mousemove', (e) => {
+        // ============================================
+        // МЫШЬ (ПК) - лупа только при зажатой кнопке
+        // ============================================
+        imageZone.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isMouseDown = true;
             updateMagnifier(e.clientX, e.clientY);
         });
         
+        imageZone.addEventListener('mousemove', (e) => {
+            if (isMouseDown) {
+                updateMagnifier(e.clientX, e.clientY);
+            }
+        });
+        
+        imageZone.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            magnifierContainer.style.display = 'none';
+        });
+        
         imageZone.addEventListener('mouseleave', () => {
+            isMouseDown = false;
             magnifierContainer.style.display = 'none';
         });
         
         imageZone.addEventListener('click', (e) => {
-            handleClick(e.clientX, e.clientY);
+            // Если это не было долгим нажатием на телефоне
+            if (!isLongPress) {
+                handleClick(e.clientX, e.clientY);
+            }
         });
         
+        // ============================================
         // ОБРАБОТЧИК КЛИКА
+        // ============================================
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             const clickX = clientX - rect.left;
@@ -611,7 +634,9 @@
             updateItemsList();
         }
         
+        // ============================================
         // АНКЕТА
+        // ============================================
         let currentPlayer = {
             name: '',
             institute: ''
@@ -635,7 +660,9 @@
             showLevelSplash('Слушай, у нас здесь затерялось парочку диковин, не поможешь найти?');
         }
         
+        // ============================================
         // ЗАСТАВКИ
+        // ============================================
         function showLevelSplash(text) {
             const splash = document.createElement('div');
             splash.className = 'splash-screen';
@@ -675,7 +702,9 @@
             document.getElementById('loginBtn').disabled = true;
         }
         
+        // ============================================
         // ОБНОВЛЕНИЕ СПИСКА
+        // ============================================
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
