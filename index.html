@@ -348,7 +348,7 @@
                 height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
-                margin: 0 auto 0 auto;
+                margin: 0 auto 0 auto; /* УБРАЛ НИЖНИЙ ОТСТУП */
             }
             
             #gameImage {
@@ -358,25 +358,26 @@
             /* ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНО, ПРЯМО ПОД КАРТИНКОЙ */
             .items-container {
                 display: flex;
-                flex-direction: row; /* ГОРИЗОНТАЛЬНО */
-                flex-wrap: nowrap; /* БЕЗ ПЕРЕНОСА */
-                justify-content: space-between; /* РАВНОМЕРНО */
-                gap: 5px; /* МИНИМАЛЬНЫЙ ЗАЗОР */
-                padding: 0;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                gap: 4px;
+                padding: 0; /* УБРАЛ ВНУТРЕННИЙ ОТСТУП */
                 background: transparent;
                 border: none;
-                margin-top: 0; /* ВПЛОТНУЮ К КАРТИНКЕ */
+                margin-top: 0; /* УБРАЛ ВЕРХНИЙ ОТСТУП */
+                margin-bottom: 0;
                 width: 100%;
-                overflow-x: visible; /* БЕЗ СКРОЛЛА */
+                overflow-x: visible;
             }
             
-            /* РАМКИ УМЕНЬШЕНЫ, КАРТИНКИ ТЕ ЖЕ */
+            /* КАРТИНКИ ПРЕДМЕТОВ УВЕЛИЧЕНЫ, НО ВЛЕЗАЮТ В РЯД */
             .item-image {
-                width: 18%; /* 5 штук в ряд */
+                width: 19%; /* ЧУТЬ БОЛЬШЕ, НО 5 ШТУК ВЛЕЗАЕТ */
                 height: auto;
                 aspect-ratio: 1/1;
-                border-width: 2px; /* ТОНЬШЕ РАМКА */
-                padding: 3px; /* МЕНЬШЕ ОТСТУП */
+                border-width: 2px;
+                padding: 2px;
                 margin: 0;
             }
             
@@ -409,7 +410,7 @@
             }
             
             .item-image {
-                width: 18%;
+                width: 19%;
             }
             
             .hint-text {
@@ -429,6 +430,7 @@
     </style>
 </head>
 <body>
+    <!-- ВЕСЬ HTML БЕЗ ИЗМЕНЕНИЙ -->
     <div class="game-container">
         <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
@@ -457,14 +459,14 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНО ПОД КАРТИНКОЙ -->
+            <!-- ПРЕДМЕТЫ - ВПРИТЫК К КАРТИНКЕ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // ЛУПА
+        // ЛУПА (БЕЗ ИЗМЕНЕНИЙ)
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
