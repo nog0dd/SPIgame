@@ -300,7 +300,7 @@
             min-height: 80px;
         }
         
-        /* ТЕЛЕФОНЫ - ВСЁ ЧЁТКО ПО ТРЕБОВАНИЮ */
+        /* ТЕЛЕФОНЫ - ВСЁ ПО ТРЕБОВАНИЮ */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -342,10 +342,10 @@
                 font-size: 18px;
             }
             
-            /* КАРТИНКА РАСТЯНУТА ПО ВЕРТИКАЛИ (БОЛЬШЕ) */
+            /* КАРТИНКА БОЛЬШЕ */
             .image-zone {
                 aspect-ratio: auto;
-                height: 70vh; /* УВЕЛИЧЕНО с 50vh до 70vh */
+                height: 70vh;
                 max-height: 600px;
                 border-width: 4px;
                 margin: 0 auto 0 auto;
@@ -355,28 +355,29 @@
                 object-fit: cover;
             }
             
-            /* УБРАНА БОЛЬШАЯ РАМКА ПРЕДМЕТОВ */
+            /* ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНО, ПРЯМО ПОД КАРТИНКОЙ */
             .items-container {
                 display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px; /* Чуть больше расстояние */
-                padding: 0; /* УБРАЛ ВНУТРЕННИЕ ОТСТУПЫ */
-                background: transparent; /* УБРАЛ ФОН */
-                border: none; /* УБРАЛ РАМКУ */
+                flex-direction: row; /* ГОРИЗОНТАЛЬНО */
+                flex-wrap: nowrap; /* БЕЗ ПЕРЕНОСА */
+                justify-content: space-between; /* РАВНОМЕРНО */
+                gap: 5px; /* МИНИМАЛЬНЫЙ ЗАЗОР */
+                padding: 0;
+                background: transparent;
+                border: none;
                 margin-top: 0; /* ВПЛОТНУЮ К КАРТИНКЕ */
-                overflow-x: visible;
-                white-space: normal;
+                width: 100%;
+                overflow-x: visible; /* БЕЗ СКРОЛЛА */
             }
             
-            /* КАРТИНКИ ПРЕДМЕТОВ УВЕЛИЧЕНЫ */
+            /* РАМКИ УМЕНЬШЕНЫ, КАРТИНКИ ТЕ ЖЕ */
             .item-image {
-                width: 150px; /* УВЕЛИЧЕНО с 120px до 150px */
-                height: 150px;
-                min-width: auto;
-                flex-shrink: 1;
-                border-width: 4px;
-                padding: 8px;
+                width: 18%; /* 5 штук в ряд */
+                height: auto;
+                aspect-ratio: 1/1;
+                border-width: 2px; /* ТОНЬШЕ РАМКА */
+                padding: 3px; /* МЕНЬШЕ ОТСТУП */
+                margin: 0;
             }
             
             .magnifier-glass {
@@ -403,13 +404,12 @@
         /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
         @media (max-width: 480px) {
             .image-zone {
-                height: 60vh; /* НА МАЛЕНЬКИХ ТОЖЕ БОЛЬШЕ */
+                height: 60vh;
                 max-height: 500px;
             }
             
             .item-image {
-                width: 130px; /* УВЕЛИЧЕНО */
-                height: 130px;
+                width: 18%;
             }
             
             .hint-text {
@@ -429,7 +429,6 @@
     </style>
 </head>
 <body>
-    <!-- ВЕСЬ HTML И JS БЕЗ ИЗМЕНЕНИЙ (ПОЛНОСТЬЮ ТВОЙ КОД) -->
     <div class="game-container">
         <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
@@ -458,7 +457,7 @@
             
             <div id="message"></div>
             
-            <!-- ПРЕДМЕТЫ -->
+            <!-- ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНО ПОД КАРТИНКОЙ -->
             <div class="items-container" id="itemsContainer"></div>
         </div>
     </div>
