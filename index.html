@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Антикварная лавка</title>
+    <title>Антикварная лавка - Сбор координат</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
     <style>
         * {
@@ -28,7 +28,7 @@
             width: 100%;
         }
         
-        /* КНОПКА АДМИНА */
+        /* КНОПКА АДМИНА (ТОЛЬКО НА РЕГИСТРАЦИИ) */
         .admin-btn {
             position: fixed;
             top: 20px;
@@ -110,6 +110,8 @@
             border-radius: 30px;
             padding: 20px;
             margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .participant-item {
@@ -129,6 +131,78 @@
             cursor: pointer;
             margin-top: 20px;
             width: 100%;
+        }
+        
+        /* ПАНЕЛЬ ДЛЯ СБОРА КООРДИНАТ */
+        .coords-panel {
+            background: #d4b595;
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #a6896b;
+        }
+        
+        .coords-display {
+            font-size: 32px;
+            font-family: monospace;
+            background: #f5e6d3;
+            padding: 20px;
+            border-radius: 30px;
+            border: 2px solid #8b6f50;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .level-btn {
+            background: #b5926a;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+            color: white;
+            border: 3px solid #e9b87a;
+            flex: 1;
+        }
+        
+        .level-btn.active {
+            background: #5fa87f;
+            border-color: #8fecb0;
+        }
+        
+        .coords-history {
+            background: #f5e6d3;
+            border-radius: 30px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .coord-item {
+            padding: 10px;
+            border-bottom: 1px solid #e6d5b8;
+            font-family: monospace;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .copy-btn {
+            background: #8b6f50;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
         }
         
         /* ЗАСТАВКИ УРОВНЕЙ */
@@ -446,6 +520,16 @@
                 font-size: 18px;
             }
             
+            .coords-display {
+                font-size: 24px;
+                padding: 15px;
+            }
+            
+            .level-btn {
+                font-size: 20px;
+                padding: 12px 20px;
+            }
+            
             .image-zone {
                 aspect-ratio: auto;
                 height: 70vh;
@@ -532,7 +616,7 @@
     </style>
 </head>
 <body>
-    <!-- КНОПКА АДМИНА -->
+    <!-- КНОПКА АДМИНА (ТОЛЬКО НА ЭКРАНЕ РЕГИСТРАЦИИ) -->
     <button class="admin-btn" id="adminBtn" onclick="openAdminPanel()">Админка</button>
     
     <!-- МОДАЛЬНОЕ ОКНО АДМИНА -->
@@ -545,9 +629,7 @@
             </div>
             <div id="adminParticipants" style="display: none;">
                 <h3>Список участников</h3>
-                <div class="participants-list" id="participantsList">
-                    <!-- Сюда загрузится список -->
-                </div>
+                <div class="participants-list" id="participantsList"></div>
                 <button class="close-admin" onclick="closeAdminPanel()">Закрыть</button>
             </div>
         </div>
@@ -564,6 +646,17 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
+            <!-- ПАНЕЛЬ ДЛЯ СБОРА КООРДИНАТ С ТЕЛЕФОНА -->
+            <div class="coords-panel">
+                <div class="level-selector">
+                    <button class="level-btn active" onclick="selectLevel(1)">Уровень 1</button>
+                    <button class="level-btn" onclick="selectLevel(2)">Уровень 2</button>
+                    <button class="level-btn" onclick="selectLevel(3)">Уровень 3</button>
+                </div>
+                <div class="coords-display" id="currentCoords">👆 Тыкай в предметы</div>
+                <div class="coords-history" id="coordsHistory"></div>
+            </div>
+            
             <!-- ПОДСКАЗКА -->
             <div class="hint-container">
                 <span class="hint-text">🔍 нажми на картинку для лупы (ПК) / задержи палец (телефон)</span>
@@ -588,9 +681,11 @@
 
     <script>
         // ============================================
-        // ДАННЫЕ ИГРОКОВ
+        // ДАННЫЕ
         // ============================================
         let participants = JSON.parse(localStorage.getItem('participants')) || [];
+        let currentEditLevel = 1;
+        let clickHistory = { 1: [], 2: [], 3: [] };
         
         // ============================================
         // АДМИН-ПАНЕЛЬ
@@ -626,16 +721,58 @@
             }
             
             let html = '';
-            participants.forEach((p, index) => {
+            participants.slice().reverse().forEach((p, index) => {
                 html += `
                     <div class="participant-item">
-                        <span>${index + 1}. ${p.name}</span>
+                        <span>#${participants.length - index}. ${p.name}</span>
                         <span>${p.institute}</span>
                         <span>${p.date}</span>
                     </div>
                 `;
             });
             list.innerHTML = html;
+        }
+        
+        // ============================================
+        // СБОР КООРДИНАТ
+        // ============================================
+        function selectLevel(level) {
+            currentEditLevel = level;
+            document.querySelectorAll('.level-btn').forEach((btn, index) => {
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateCoordsHistory();
+        }
+        
+        function updateCoordsHistory() {
+            const historyDiv = document.getElementById('coordsHistory');
+            const history = clickHistory[currentEditLevel];
+            
+            if (history.length === 0) {
+                historyDiv.innerHTML = '<div class="coord-item">Пока нет кликов</div>';
+                return;
+            }
+            
+            let html = '';
+            history.forEach((click, index) => {
+                html += `
+                    <div class="coord-item">
+                        <span>#${index + 1}: X: ${click.x}, Y: ${click.y}</span>
+                        <button class="copy-btn" onclick="copyCoord(${click.x}, ${click.y})">📋</button>
+                    </div>
+                `;
+            });
+            historyDiv.innerHTML = html;
+        }
+        
+        function copyCoord(x, y) {
+            navigator.clipboard.writeText(`X: ${x}, Y: ${y}`).then(() => {
+                alert(`Скопировано: X: ${x}, Y: ${y}`);
+            });
         }
         
         // ============================================
@@ -653,7 +790,7 @@
         let startX, startY;
         let isMouseDown = false;
         
-        // ПРЕДМЕТЫ - ТВОИ НОВЫЕ КООРДИНАТЫ
+        // ПРЕДМЕТЫ - ТВОИ КООРДИНАТЫ
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 385, y: 742, radius: 45, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 381, y: 239, radius: 45, found: false },
@@ -786,7 +923,7 @@
             }
         });
         
-        // ОБРАБОТЧИК КЛИКА (С АВТОПОДСТРОЙКОЙ ПОД ТЕЛЕФОН)
+        // ОБРАБОТЧИК КЛИКА
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             const clickX = clientX - rect.left;
@@ -800,8 +937,12 @@
             const scaleY = gameImage.naturalHeight / rect.height;
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
+            
+            // Сохраняем координаты
+            clickHistory[currentEditLevel].push({ x: imgX, y: imgY });
+            document.getElementById('currentCoords').innerHTML = `X: ${imgX}, Y: ${imgY}`;
+            updateCoordsHistory();
 
-            // Определяем устройство
             const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
             
             items.forEach(item => {
@@ -810,13 +951,10 @@
                     const dy = imgY - item.y;
                     const distance = Math.sqrt(dx*dx + dy*dy);
                     
-                    // Для телефона радиус зависит от ширины картинки (12% от ширины)
-                    // Для ПК используем фиксированный радиус
                     const activeRadius = isTouch ? (rect.width * 0.12) : item.radius;
                     
                     if (distance < activeRadius) {
                         item.found = true;
-                        console.log(`Найден: ${item.name} (${isTouch ? 'телефон' : 'ПК'})`);
                     }
                 }
             });
@@ -842,7 +980,6 @@
             currentPlayer.name = document.getElementById('loginName').value.trim();
             currentPlayer.institute = document.getElementById('loginInstitute').value.trim();
             
-            // Сохраняем участника
             const now = new Date();
             const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
             participants.push({
