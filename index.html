@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Антикварная лавка</title>
+    <title>Антикварная лавка - Редактор</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
     <style>
         * {
@@ -28,7 +28,178 @@
             width: 100%;
         }
         
-        /* ЗАСТАВКИ УРОВНЕЙ */
+        /* КНОПКА АДМИНА */
+        .admin-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #8b6f50;
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            z-index: 2000;
+            border: 2px solid #e9b87a;
+        }
+        
+        /* МОДАЛЬНОЕ ОКНО АДМИНА */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            display: none;
+        }
+        
+        .admin-modal.active {
+            display: flex;
+        }
+        
+        .admin-content {
+            background: #f5e6d3;
+            border-radius: 60px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 6px solid #c4a27a;
+        }
+        
+        .admin-content h2 {
+            font-size: 36px;
+            color: #4a3729;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .admin-password {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-password input {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 40px;
+            border: 3px solid #8b6f50;
+        }
+        
+        .admin-password button {
+            background: #5fa87f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .participants-list {
+            background: white;
+            border-radius: 30px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .participant-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e6d5b8;
+        }
+        
+        .close-admin {
+            background: #b5926a;
+            color: white;
+            border: none;
+            font-size: 24px;
+            padding: 10px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        /* ПАНЕЛЬ КООРДИНАТ */
+        .coords-panel {
+            background: #d4b595;
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #a6896b;
+        }
+        
+        .coords-display {
+            font-size: 24px;
+            font-family: monospace;
+            background: #f5e6d3;
+            padding: 15px;
+            border-radius: 30px;
+            border: 2px solid #8b6f50;
+            margin-bottom: 10px;
+        }
+        
+        .coords-history {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f5e6d3;
+            border-radius: 30px;
+            padding: 10px;
+        }
+        
+        .coord-item {
+            padding: 8px;
+            border-bottom: 1px solid #e6d5b8;
+            font-family: monospace;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .copy-btn {
+            background: #8b6f50;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .level-btn {
+            background: #b5926a;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 40px;
+            cursor: pointer;
+            color: white;
+            border: 3px solid #e9b87a;
+        }
+        
+        .level-btn.active {
+            background: #5fa87f;
+            border-color: #8fecb0;
+        }
+        
+        /* ВСЁ ОСТАЛЬНОЕ КАК БЫЛО */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -74,7 +245,6 @@
             100% { opacity: 0.5; }
         }
         
-        /* КНОПКА К НАЧАЛУ */
         .restart-btn {
             background: #b5926a;
             color: white;
@@ -95,7 +265,6 @@
             background: #c4a27a;
         }
         
-        /* АНКЕТА */
         .login-screen {
             background: #f5e6d3;
             border-radius: 40px;
@@ -154,7 +323,6 @@
             transform: none;
         }
         
-        /* ПОДСКАЗКА */
         .hint-container {
             text-align: center;
             margin-bottom: 5px;
@@ -174,7 +342,6 @@
             font-weight: 500;
         }
         
-        /* ИГРОВОЙ ЭКРАН */
         .game-screen {
             display: none;
         }
@@ -183,7 +350,6 @@
             display: block;
         }
         
-        /* КАРТИНКА */
         .image-zone {
             position: relative;
             width: 100%;
@@ -208,7 +374,6 @@
             pointer-events: auto;
         }
         
-        /* ЛУПА */
         .magnifier-container {
             position: absolute;
             pointer-events: none;
@@ -258,7 +423,6 @@
             border: 3px solid #e9b87a;
         }
         
-        /* ПРЕДМЕТЫ - ПО УМОЛЧАНИЮ (ДЛЯ КОМПА) */
         .items-container {
             display: flex;
             overflow-x: auto;
@@ -301,7 +465,6 @@
             min-height: 80px;
         }
         
-        /* ТЕЛЕФОНЫ */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
@@ -343,7 +506,6 @@
                 font-size: 18px;
             }
             
-            /* КАРТИНКА БОЛЬШЕ */
             .image-zone {
                 aspect-ratio: auto;
                 height: 70vh;
@@ -356,7 +518,6 @@
                 object-fit: cover;
             }
             
-            /* ПРЕДМЕТЫ - ГОРИЗОНТАЛЬНО, ПРЯМО ПОД КАРТИНКОЙ */
             .items-container {
                 display: flex;
                 flex-direction: row;
@@ -372,7 +533,6 @@
                 overflow-x: visible;
             }
             
-            /* КАРТИНКИ ПРЕДМЕТОВ УВЕЛИЧЕНЫ ВНУТРИ РАМОК */
             .item-image {
                 width: 19%;
                 height: auto;
@@ -404,7 +564,6 @@
             }
         }
         
-        /* ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ */
         @media (max-width: 480px) {
             .image-zone {
                 height: 60vh;
@@ -433,6 +592,31 @@
     </style>
 </head>
 <body>
+    <!-- КНОПКА ДЛЯ АДМИНА -->
+    <button class="admin-btn" onclick="openAdminPanel()">🔒 Админка</button>
+    
+    <!-- МОДАЛЬНОЕ ОКНО АДМИНА -->
+    <div id="adminModal" class="admin-modal">
+        <div class="admin-content">
+            <h2>🔐 Панель администратора</h2>
+            <div class="admin-password">
+                <input type="password" id="adminPassword" placeholder="Введите пароль">
+                <button onclick="checkAdminPassword()">Войти</button>
+            </div>
+            <div id="adminParticipants" style="display: none;">
+                <h3>📋 Список участников</h3>
+                <div class="participants-list" id="participantsList">
+                    <!-- Сюда загрузится список -->
+                </div>
+                <div style="margin-top: 20px;">
+                    <h3>📊 Координаты для копирования</h3>
+                    <div id="coordsForCopy" style="background: white; padding: 15px; border-radius: 20px; font-family: monospace; white-space: pre-wrap;"></div>
+                </div>
+                <button class="close-admin" onclick="closeAdminPanel()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <div class="game-container">
         <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
@@ -444,6 +628,17 @@
         
         <!-- ИГРОВОЙ ЭКРАН -->
         <div id="gameScreen" class="game-screen">
+            <!-- ПАНЕЛЬ ДЛЯ СБОРА КООРДИНАТ -->
+            <div class="coords-panel" id="coordsPanel">
+                <div class="level-selector">
+                    <button class="level-btn active" onclick="selectLevel(1)">Уровень 1</button>
+                    <button class="level-btn" onclick="selectLevel(2)">Уровень 2</button>
+                    <button class="level-btn" onclick="selectLevel(3)">Уровень 3</button>
+                </div>
+                <div class="coords-display" id="currentCoords">Кликни на картинку</div>
+                <div class="coords-history" id="coordsHistory"></div>
+            </div>
+            
             <!-- ПОДСКАЗКА -->
             <div class="hint-container">
                 <span class="hint-text">🔍 нажми на картинку для лупы (ПК) / задержи палец (телефон)</span>
@@ -468,7 +663,130 @@
 
     <script>
         // ============================================
-        // ЛУПА
+        // ДАННЫЕ ИГРОКОВ (ХРАНЯТСЯ В LOCALSTORAGE)
+        // ============================================
+        let participants = JSON.parse(localStorage.getItem('participants')) || [];
+        
+        // ============================================
+        // АДМИН-ПАНЕЛЬ
+        // ============================================
+        const ADMIN_PASSWORD = "admin123"; // Смени на свой пароль
+        
+        function openAdminPanel() {
+            document.getElementById('adminModal').classList.add('active');
+        }
+        
+        function closeAdminPanel() {
+            document.getElementById('adminModal').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminParticipants').style.display = 'none';
+        }
+        
+        function checkAdminPassword() {
+            const pwd = document.getElementById('adminPassword').value;
+            if (pwd === ADMIN_PASSWORD) {
+                document.getElementById('adminParticipants').style.display = 'block';
+                loadParticipantsList();
+                generateCoordsForCopy();
+            } else {
+                alert('Неверный пароль!');
+            }
+        }
+        
+        function loadParticipantsList() {
+            const list = document.getElementById('participantsList');
+            if (participants.length === 0) {
+                list.innerHTML = '<p>Пока нет участников</p>';
+                return;
+            }
+            
+            let html = '';
+            participants.forEach((p, index) => {
+                html += `
+                    <div class="participant-item">
+                        <span>${index + 1}. ${p.name}</span>
+                        <span>${p.institute}</span>
+                        <span>${p.date}</span>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+        
+        function generateCoordsForCopy() {
+            const coordsDiv = document.getElementById('coordsForCopy');
+            let text = '// КООРДИНАТЫ ДЛЯ КОПИРОВАНИЯ\n\n';
+            
+            // Уровень 1
+            text += '// Уровень 1\n';
+            level1Items.forEach(item => {
+                text += `{ name: "${item.name}", x: ${item.x}, y: ${item.y}, radius: 45, phoneRadius: 130 },\n`;
+            });
+            
+            text += '\n// Уровень 2\n';
+            level2Items.forEach(item => {
+                text += `{ name: "${item.name}", x: ${item.x}, y: ${item.y}, radius: 45, phoneRadius: 130 },\n`;
+            });
+            
+            text += '\n// Уровень 3\n';
+            level3Items.forEach(item => {
+                text += `{ name: "${item.name}", x: ${item.x}, y: ${item.y}, radius: 45, phoneRadius: 130 },\n`;
+            });
+            
+            coordsDiv.textContent = text;
+        }
+        
+        // ============================================
+        // СБОР КООРДИНАТ
+        // ============================================
+        let currentEditLevel = 1;
+        let clickHistory = {
+            1: [],
+            2: [],
+            3: []
+        };
+        
+        function selectLevel(level) {
+            currentEditLevel = level;
+            document.querySelectorAll('.level-btn').forEach((btn, index) => {
+                if (index + 1 === level) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateCoordsHistory();
+        }
+        
+        function updateCoordsHistory() {
+            const historyDiv = document.getElementById('coordsHistory');
+            const history = clickHistory[currentEditLevel];
+            
+            if (history.length === 0) {
+                historyDiv.innerHTML = '<div class="coord-item">Нет кликов</div>';
+                return;
+            }
+            
+            let html = '';
+            history.forEach((click, index) => {
+                html += `
+                    <div class="coord-item">
+                        <span>#${index + 1}: X=${click.x}, Y=${click.y}</span>
+                        <button class="copy-btn" onclick="copyCoord(${click.x}, ${click.y})">📋</button>
+                    </div>
+                `;
+            });
+            historyDiv.innerHTML = html;
+        }
+        
+        function copyCoord(x, y) {
+            navigator.clipboard.writeText(`X=${x}, Y=${y}`).then(() => {
+                alert(`Скопировано: X=${x}, Y=${y}`);
+            });
+        }
+        
+        // ============================================
+        // ЛУПА И ИГРА (ТВОЙ КОД)
         // ============================================
         const imageZone = document.getElementById('imageZone');
         const magnifierContainer = document.getElementById('magnifierContainer');
@@ -480,9 +798,8 @@
         let isLongPress = false;
         let startX, startY;
         let isMouseDown = false;
-        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         
-        // ПРЕДМЕТЫ - УМЕНЬШЕННЫЕ ХИТБОКСЫ
+        // ПРЕДМЕТЫ - ТВОИ КООРДИНАТЫ (ПОКА СТАРЫЕ, ТЫ ИХ ОБНОВИШЬ)
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 391, y: 736, radius: 45, phoneRadius: 130, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 382, y: 229, radius: 45, phoneRadius: 130, found: false },
@@ -511,7 +828,6 @@
 
         function updateMagnifier(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
-            
             const x = clientX - rect.left;
             const y = clientY - rect.top;
             
@@ -616,7 +932,7 @@
             }
         });
         
-        // ОБРАБОТЧИК КЛИКА
+        // ОБРАБОТЧИК КЛИКА (СОХРАНЯЕТ КООРДИНАТЫ)
         function handleClick(clientX, clientY) {
             const rect = imageZone.getBoundingClientRect();
             const clickX = clientX - rect.left;
@@ -630,8 +946,12 @@
             const scaleY = gameImage.naturalHeight / rect.height;
             const imgX = Math.round(clickX * scaleX);
             const imgY = Math.round(clickY * scaleY);
+            
+            // Сохраняем в историю для текущего редактируемого уровня
+            clickHistory[currentEditLevel].push({ x: imgX, y: imgY });
+            updateCoordsHistory();
+            document.getElementById('currentCoords').innerHTML = `X: ${imgX}, Y: ${imgY}`;
 
-            // Определяем, какое устройство
             const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
             
             items.forEach(item => {
@@ -640,12 +960,11 @@
                     const dy = imgY - item.y;
                     const distance = Math.sqrt(dx*dx + dy*dy);
                     
-                    // Используем разные радиусы для ПК и телефона
                     const activeRadius = isTouch ? item.phoneRadius : item.radius;
                     
                     if (distance < activeRadius) {
                         item.found = true;
-                        console.log(`Найден: ${item.name} (${isTouch ? 'телефон' : 'ПК'})`);
+                        console.log(`Найден: ${item.name}`);
                     }
                 }
             });
@@ -670,6 +989,16 @@
         function startGame() {
             currentPlayer.name = document.getElementById('loginName').value.trim();
             currentPlayer.institute = document.getElementById('loginInstitute').value.trim();
+            
+            // Сохраняем участника
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
+            participants.push({
+                name: currentPlayer.name,
+                institute: currentPlayer.institute,
+                date: dateStr
+            });
+            localStorage.setItem('participants', JSON.stringify(participants));
             
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').classList.add('active');
@@ -717,7 +1046,7 @@
             document.getElementById('loginBtn').disabled = true;
         }
         
-        // ОБНОВЛЕНИЕ СПИСКА
+        // ОБНОВЛЕНИЕ СПИСКА ПРЕДМЕТОВ
         const itemsContainer = document.getElementById('itemsContainer');
         const messageDiv = document.getElementById('message');
 
