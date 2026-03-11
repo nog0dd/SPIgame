@@ -588,6 +588,12 @@
 
     <script>
         // ============================================
+        // НАСТРОЙКИ
+        // ============================================
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhr_3bxpqyPBU5OJPWXMAr4EfYNoJrFRXZvB7qzigpwOHUXIpOSxSOQ_5vagr4dFiQkg/exec';
+        const ADMIN_PASSWORD = "admin123";
+        
+        // ============================================
         // ДАННЫЕ
         // ============================================
         let participants = JSON.parse(localStorage.getItem('participants')) || [];
@@ -595,8 +601,6 @@
         // ============================================
         // АДМИН-ПАНЕЛЬ
         // ============================================
-        const ADMIN_PASSWORD = "admin123";
-        
         function openAdminPanel() {
             document.getElementById('adminModal').classList.add('active');
             loadParticipantsList();
@@ -636,6 +640,28 @@
                 `;
             });
             list.innerHTML = html;
+        }
+        
+        // ============================================
+        // ОТПРАВКА В GOOGLE ТАБЛИЦУ
+        // ============================================
+        async function saveParticipantToSheet(name, institute) {
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        institute: institute
+                    })
+                });
+                console.log('✅ Данные отправлены в Google Таблицу');
+            } catch (error) {
+                console.error('❌ Ошибка отправки в Google Таблицу:', error);
+            }
         }
         
         // ============================================
@@ -805,19 +831,17 @@
             
             items.forEach(item => {
                 if (!item.found) {
-                    // Для телефона используем phoneX/phoneY, для ПК - обычные x/y
                     const targetX = isTouch ? item.phoneX : item.x;
                     const targetY = isTouch ? item.phoneY : item.y;
                     const dx = imgX - targetX;
                     const dy = imgY - targetY;
                     const distance = Math.sqrt(dx*dx + dy*dy);
                     
-                    // Для телефона радиус зависит от ширины картинки, для ПК - фиксированный
                     const activeRadius = isTouch ? (rect.width * 0.12) : item.radius;
                     
                     if (distance < activeRadius) {
                         item.found = true;
-                        console.log(`Найден: ${item.name} (${isTouch ? 'телефон' : 'ПК'})`);
+                        console.log(`Найден: ${item.name}`);
                     }
                 }
             });
@@ -840,14 +864,21 @@
         }
         
         function startGame() {
-            currentPlayer.name = document.getElementById('loginName').value.trim();
-            currentPlayer.institute = document.getElementById('loginInstitute').value.trim();
+            const name = document.getElementById('loginName').value.trim();
+            const institute = document.getElementById('loginInstitute').value.trim();
             
+            currentPlayer.name = name;
+            currentPlayer.institute = institute;
+            
+            // Отправляем в Google Таблицу
+            saveParticipantToSheet(name, institute);
+            
+            // Сохраняем локально (для админки)
             const now = new Date();
             const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
             participants.push({
-                name: currentPlayer.name,
-                institute: currentPlayer.institute,
+                name: name,
+                institute: institute,
                 date: dateStr
             });
             localStorage.setItem('participants', JSON.stringify(participants));
@@ -898,7 +929,7 @@
             document.getElementById('loginName').value = '';
             document.getElementById('loginInstitute').value = '';
             document.getElementById('loginBtn').disabled = true;
-            adminBtn.style.display = 'block'; // Показываем кнопку админки обратно
+            adminBtn.style.display = 'block';
         }
         
         // ОБНОВЛЕНИЕ СПИСКА ПРЕДМЕТОВ
@@ -961,4 +992,3 @@
     </script>
 </body>
 </html>
-
