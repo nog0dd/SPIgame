@@ -28,111 +28,6 @@
             width: 100%;
         }
         
-        /* КНОПКА АДМИНА (ТОЛЬКО НА РЕГИСТРАЦИИ) */
-        .admin-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #8b6f50;
-            color: white;
-            border: none;
-            font-size: 18px;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            z-index: 2000;
-            border: 2px solid #e9b87a;
-        }
-        
-        /* МОДАЛЬНОЕ ОКНО АДМИНА */
-        .admin-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
-            display: none;
-        }
-        
-        .admin-modal.active {
-            display: flex;
-        }
-        
-        .admin-content {
-            background: #f5e6d3;
-            border-radius: 60px;
-            padding: 40px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 6px solid #c4a27a;
-        }
-        
-        .admin-content h2 {
-            font-size: 36px;
-            color: #4a3729;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .admin-password {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .admin-password input {
-            flex: 1;
-            padding: 15px;
-            font-size: 18px;
-            border-radius: 40px;
-            border: 3px solid #8b6f50;
-        }
-        
-        .admin-password button {
-            background: #5fa87f;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        
-        .participants-list {
-            background: white;
-            border-radius: 30px;
-            padding: 20px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .participant-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #e6d5b8;
-        }
-        
-        .close-admin {
-            background: #b5926a;
-            color: white;
-            border: none;
-            font-size: 24px;
-            padding: 10px 30px;
-            border-radius: 40px;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-        }
-        
         /* ЗАСТАВКИ УРОВНЕЙ */
         .splash-screen {
             position: fixed;
@@ -534,25 +429,6 @@
     </style>
 </head>
 <body>
-    <!-- КНОПКА АДМИНА -->
-    <button class="admin-btn" id="adminBtn" onclick="openAdminPanel()">🗝️</button>
-    
-    <!-- МОДАЛЬНОЕ ОКНО АДМИНА -->
-    <div id="adminModal" class="admin-modal">
-        <div class="admin-content">
-            <h2>Панель администратора</h2>
-            <div class="admin-password">
-                <input type="password" id="adminPassword" placeholder="Введите пароль">
-                <button onclick="checkAdminPassword()">Войти</button>
-            </div>
-            <div id="adminParticipants" style="display: none;">
-                <h3>Список участников</h3>
-                <div class="participants-list" id="participantsList"></div>
-                <button class="close-admin" onclick="closeAdminPanel()">Закрыть</button>
-            </div>
-        </div>
-    </div>
-
     <div class="game-container">
         <!-- АНКЕТА -->
         <div id="loginScreen" class="login-screen">
@@ -591,56 +467,6 @@
         // НАСТРОЙКИ
         // ============================================
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwhr_3bxpqyPBU5OJPWXMAr4EfYNoJrFRXZvB7qzigpwOHUXIpOSxSOQ_5vagr4dFiQkg/exec';
-        const ADMIN_PASSWORD = "admin123";
-        
-        // ============================================
-        // ДАННЫЕ
-        // ============================================
-        let participants = JSON.parse(localStorage.getItem('participants')) || [];
-        
-        // ============================================
-        // АДМИН-ПАНЕЛЬ
-        // ============================================
-        function openAdminPanel() {
-            document.getElementById('adminModal').classList.add('active');
-            loadParticipantsList();
-        }
-        
-        function closeAdminPanel() {
-            document.getElementById('adminModal').classList.remove('active');
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminParticipants').style.display = 'none';
-        }
-        
-        function checkAdminPassword() {
-            const pwd = document.getElementById('adminPassword').value;
-            if (pwd === ADMIN_PASSWORD) {
-                document.getElementById('adminParticipants').style.display = 'block';
-                loadParticipantsList();
-            } else {
-                alert('Неверный пароль!');
-            }
-        }
-        
-        function loadParticipantsList() {
-            const list = document.getElementById('participantsList');
-            if (participants.length === 0) {
-                list.innerHTML = '<p>Пока нет участников</p>';
-                return;
-            }
-            
-            let html = '';
-            participants.slice().reverse().forEach((p, index) => {
-                html += `
-                    <div class="participant-item">
-                        <span>#${participants.length - index}. ${p.name}</span>
-                        <span>${p.institute}</span>
-                        <span>${p.date}</span>
-                    </div>
-                `;
-            });
-            list.innerHTML = html;
-        }
         
         // ============================================
         // ОТПРАВКА В GOOGLE ТАБЛИЦУ
@@ -671,7 +497,6 @@
         const magnifierContainer = document.getElementById('magnifierContainer');
         const magnifierGlass = document.getElementById('magnifierGlass');
         const gameImage = document.getElementById('gameImage');
-        const adminBtn = document.getElementById('adminBtn');
         
         let currentLevel = 1;
         let longPressTimer = null;
@@ -679,7 +504,7 @@
         let startX, startY;
         let isMouseDown = false;
         
-        // ПРЕДМЕТЫ - ДЛЯ ПК (radius) И ТЕЛЕФОНА (phoneX, phoneY)
+        // ПРЕДМЕТЫ
         const level1Items = [
             { name: "СУНДУК", file: "игра1/сундук.png", x: 406, y: 748, radius: 45, phoneX: 406, phoneY: 748, found: false },
             { name: "ЗОНТ", file: "игра1/зонт.png", x: 403, y: 215, radius: 45, phoneX: 403, phoneY: 215, found: false },
@@ -841,7 +666,6 @@
                     
                     if (distance < activeRadius) {
                         item.found = true;
-                        console.log(`Найден: ${item.name}`);
                     }
                 }
             });
@@ -850,11 +674,6 @@
         }
         
         // АНКЕТА
-        let currentPlayer = {
-            name: '',
-            institute: ''
-        };
-        
         function checkLoginForm() {
             const name = document.getElementById('loginName').value.trim();
             const institute = document.getElementById('loginInstitute').value.trim();
@@ -867,24 +686,10 @@
             const name = document.getElementById('loginName').value.trim();
             const institute = document.getElementById('loginInstitute').value.trim();
             
-            currentPlayer.name = name;
-            currentPlayer.institute = institute;
-            
             // Отправляем в Google Таблицу
             saveParticipantToSheet(name, institute);
             
-            // Сохраняем локально (для админки)
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
-            participants.push({
-                name: name,
-                institute: institute,
-                date: dateStr
-            });
-            localStorage.setItem('participants', JSON.stringify(participants));
-            
-            // Прячем кнопку админки и анкету
-            adminBtn.style.display = 'none';
+            // Прячем анкету
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('gameScreen').classList.add('active');
             
@@ -929,7 +734,6 @@
             document.getElementById('loginName').value = '';
             document.getElementById('loginInstitute').value = '';
             document.getElementById('loginBtn').disabled = true;
-            adminBtn.style.display = 'block';
         }
         
         // ОБНОВЛЕНИЕ СПИСКА ПРЕДМЕТОВ
